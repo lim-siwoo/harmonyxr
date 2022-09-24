@@ -42,6 +42,7 @@ peer.on("open", (peerId) => {
 peer.on('connection', function (conn) {
   conn.on('open', () => {
     conn.on('data', (data) => {
+      console.log("Datachannel Received");
       var chatArea = document.getElementById('chatArea');
       chatArea.append("\n" + data.username + " : " + data.msg);
       document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
@@ -59,6 +60,7 @@ const connectToNewUser = (peerId, stream) => {
   });
 
   conn.on('open', () => {
+    console.log("DataChannel connected");
     conn.on('data', (data) => {
       var chatArea = document.getElementById('chatArea');
       chatArea.append("\n" + data.username + " : " + data.msg);
@@ -80,14 +82,15 @@ const addVideoStream = (video, stream) => {
 chatForm.addEventListener('submit', (e) => {
   e.preventDefault();
   var chatInput = document.getElementById('chatInput');
+  var chatArea = document.getElementById('chatArea');
+  chatArea.append("\n" + username + " : " + chatInput.value);
+  document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
 
   conns.forEach((conn) => {
-    conn.on('open', () => {
-        conn.send({
-            username: username,
-            msg: chatInput,
-        });
-    })
+    conn.send({
+        username: username,
+        msg: chatInput.value,
+    });
   })
 
   chatInput.value = "";

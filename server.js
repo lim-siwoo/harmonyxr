@@ -43,5 +43,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, function () { // Open server
-  console.log(`Listening on https://localhost:${port}/`);
+  console.log(`Listening on http://localhost:${port}/`);
 });
