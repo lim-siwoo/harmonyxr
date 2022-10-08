@@ -10,17 +10,21 @@
   <h3>Room List</h3>
   <% for(var i = 0; i < roomList.length; i++) {%> 
     <p>
-      <%= roomList[i].name %> 
+      <a href="/room/<%= roomList[i].name %>"><%= roomList[i].name %></a> 
     </p>
   <% } %> 
-  <input type="text" id="roomname" name="roomname" required size="10">
-  <button onclick="enter()">Join Room</button>
+  <form id="join">
+    <input type="text" id="roomname" required size="50">
+    <button type="submit">Join Room</button>
+  </form>
 
   <script>
-    function enter() {
+    let joinForm = document.getElementById('join');
+    joinForm.addEventListener('submit', (e) =>{
+      e.preventDefault();
       let name = document.getElementById("roomname").value;
       window.location.href = window.location.href + "room/" + name;
-    }
+    });
   </script>
 </body>
 
