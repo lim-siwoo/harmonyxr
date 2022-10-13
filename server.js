@@ -2,7 +2,7 @@ let express = require('express'); // 웹서버 구축
 let app = express();
 let port = 8006;
 
-let server = require('http').createServer(app); 
+let server = require('http').createServer(app);
 var compression = require('compression')
 
 let io = require('socket.io')(server); // 임포트
@@ -23,15 +23,17 @@ app.get('/', (req, res) => {
 });
 
 app.get('/room/:roomname', (req, res) => {
-  for( const elem of roomList) {
-    if (elem.name == req.params.roomname) { // If already exist
-      res.render('room', { roomname: elem.name });
+  for (const room of roomList) {
+    if (room.name == req.params.roomname) { // If already exist
+      room.userCount++;
+      res.render('room', { roomname: room.name });
       return;
     }
   }
 
   let room = { // Create new room data
     name: req.params.roomname,
+    userCount: 1,
   };
   roomList.push(room);
   res.render('room', { roomname: room.name });
@@ -39,28 +41,32 @@ app.get('/room/:roomname', (req, res) => {
 
 io.on('connection', (socket) => {
   socket.on('join-room', (roomname, peerId, username) => {
+    console.log(username, "joining to", roomname);
     socket.join(roomname);
     socket.to(roomname).emit("user-connected", peerId);
-    socket.data.peerId= peerId; // peerid가 생길 때마다 저장
-
+    socket.data.peerId = peerId; // peerid가 생길 때마다 저장
+    socket.data.username = username;
   });
+
   socket.on("disconnecting", (reason) => {
-    //console.log(socket.id)
-    console.log(socket.rooms)
-     for (const room of socket.rooms){ // 소켓이 속한 룸의 정보
-
-         if (room !== socket.id){
-            console.log(room);
-            io.to(room).emit("user has left", socket.data.peerId);// disconnect된 소켓 제외 나머지 소켓한테 연락
-
-         }
-     }
-    });
+    for (const roomname of socket.rooms) { // 소켓이 속한 룸의 정보
+      if (roomname !== socket.id) {
+        console.log(socket.data.username, "disconnecting from", roomname);
+        for(let key of roomList.keys()) {
+          if(roomList[key].name === roomname) {
+            roomList[key].userCount--;
+            if(roomList[key].userCount < 1) {
+              roomList.splice(key, 1);
+            } else{
+              io.to(roomname).emit("user has left", socket.data.peerId);// disconnect된 소켓 제외 나머지 소켓한테 연락
+            }
+          }
+        }
+      }
+    }
+  });
 });
 
 server.listen(port, function () { // Open server
   console.log(`Listening on http://localhost:${port}/`);
-
 });
-
-

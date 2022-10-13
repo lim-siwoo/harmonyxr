@@ -7,11 +7,11 @@
 </head>
 
 <body>
-  <h3>Room List</h3>
+  <h1>Room List</h1>
   <% for(var i = 0; i < roomList.length; i++) {%> 
-    <p>
+    <h2>
       <a href="/room/<%= roomList[i].name %>"><%= roomList[i].name %></a> 
-    </p>
+    </h2>
   <% } %> 
   <form id="join">
     <input type="text" id="roomname" required size="50">
