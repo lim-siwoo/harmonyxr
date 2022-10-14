@@ -1,0 +1,31 @@
+<html>
+
+<head>
+  <title>webrtc-test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  <h1>Room List</h1>
+  <% for(var i = 0; i < roomList.length; i++) {%> 
+    <h2>
+      <a href="/room/<%= roomList[i].name %>"><%= roomList[i].name %></a> 
+    </h2>
+  <% } %> 
+  <form id="join">
+    <input type="text" id="roomname" required size="50">
+    <button type="submit">Join Room</button>
+  </form>
+
+  <script>
+    let joinForm = document.getElementById('join');
+    joinForm.addEventListener('submit', (e) =>{
+      e.preventDefault();
+      let name = document.getElementById("roomname").value;
+      window.location.href = window.location.href + "room/" + name;
+    });
+  </script>
+</body>
+
+</html>
