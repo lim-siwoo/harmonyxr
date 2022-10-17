@@ -365,7 +365,9 @@
     let handL;
     //you can change head angle down here
     partner.rotation.y += 0.01;
+
   }
+
 var cnt =0;
   function render() {
 
@@ -376,7 +378,7 @@ var cnt =0;
     if(cnt===60){
       cnt=0;
       // for문을 돌리는게 문제가 아니라 send가 아무런 배경없이 나온것이 문제 -> socket으로 바꿔서 throw
-      socket.emit("throwPositions", username, camera.position, camera.rotation, controller1.position, controller2.position)
+      socket.emit("throwPositions", socket.id, username, camera.position, camera.rotation, controller1.position, controller2.position)
     }
     //   conns.forEach((conn) => {
     //
@@ -393,6 +395,11 @@ var cnt =0;
     //
     //   });
     // });
+    socket.on("getPositions", (sockid, user, cPos,cRot, con1Pos,con2Pos)=>{
+      console.log("sockid : "+sockid)
+      console.log("user : "+user)
+
+    })
     renderer.render( scene, camera );
   }
 

@@ -47,16 +47,9 @@ io.on('connection', (socket) => {
     socket.data.peerId = peerId; // peerid가 생길 때마다 저장
     socket.data.username = username;
   });
-  socket.on("throwPositions",(username, cPos, cRot, con1Pos, con2Pos)=>{
-    //console.log("throwPosition by " + username)
-    for (const roomname of socket.rooms) { // 소켓이 속한 룸의 정보
-      if (roomname !== socket.id) {
+  socket.on("throwPositions",(sockid, username, cPos, cRot, con1Pos, con2Pos)=>{
+    socket.broadcast.emit("getPositions", socket.id, username, cPos, cRot, con1Pos, con2Pos);
 
-        socket.to(roomname).emit("getPosition", socket.id, username, cPos, cRot, con1Pos, con2Pos);
-        console.log(username)
-      }
-
-    }
   })
   socket.on("disconnecting", (reason) => {
     for (const roomname of socket.rooms) { // 소켓이 속한 룸의 정보
@@ -74,9 +67,9 @@ io.on('connection', (socket) => {
         }
       }
     }
+
   });
 });
-
 server.listen(port, function () { // Open server
   console.log(`Listening on http://localhost:${port}/`);
 });
