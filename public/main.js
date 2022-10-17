@@ -1,8 +1,9 @@
+"use strict";
 let socket = io("/", {
   transports: ["websocket"]
 });
 
-let videoGrid = document.getElementById("video-grid");
+//let videoGrid = document.getElementById("video-grid");
 let myVideo = document.createElement("video");
 //let chatForm = document.getElementById('chatForm');
 myVideo.muted = true;

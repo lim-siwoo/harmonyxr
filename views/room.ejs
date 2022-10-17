@@ -366,20 +366,33 @@
     //you can change head angle down here
     partner.rotation.y += 0.01;
   }
-
+var cnt =0;
   function render() {
 
     handleCollisions();
-  //   conns.forEach((conn) => {
-  //     console.log(conn)
-  //   conn.send({
-  //       username: username,
-  //       postion: camera.position,
-  //       rotation: camera.rotation,
-  //       // TODO:
-  //       // 왼손 오른손 컨트롤러 위치도 보내기
-  //   });
-  // })
+    "use strict";
+    //console.log("conn.on")
+    cnt++
+    if(cnt===60){
+      cnt=0;
+      // for문을 돌리는게 문제가 아니라 send가 아무런 배경없이 나온것이 문제 -> socket으로 바꿔서 throw
+      socket.emit("throwPositions", username, camera.position, camera.rotation, controller1.position, controller2.position)
+    }
+    //   conns.forEach((conn) => {
+    //
+    //     console.log("conn.on")
+    //     conn.send({
+    //       // 유저 id
+    //       username: username,
+    //       // head 위치와 회전
+    //       position: camera.position,
+    //       rotation: camera.rotation,
+    //       //손의 위치 -> 손의 회전값은 안보내도 될까?
+    //       controllerL: controller1.position,
+    //       controllerR: controller2.position
+    //
+    //   });
+    // });
     renderer.render( scene, camera );
   }
 
