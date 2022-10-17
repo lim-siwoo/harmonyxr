@@ -40,6 +40,7 @@
   import { OrbitControls } from '/OrbitControls.js';
   import { VRButton } from '/VRButton.js';
   import { XRControllerModelFactory } from '/XRControllerModelFactory.js';
+  import { GLTFLoader } from '/loaders/GLTFLoader.js';
 
   let container;
   let camera, scene, renderer;
@@ -50,6 +51,7 @@
   const controllers = [];
   const oscillators = [];
   let controls, group;
+  let partner;
   let audioCtx = null;
 
   // minor pentatonic scale, so whichever notes is striked would be more pleasant
@@ -124,6 +126,11 @@
     group = new THREE.Group();
     group.position.z = - 0.5;
     scene.add( group );
+
+    partner = new THREE.Group();
+    // group.position.z = - 0.5;
+    scene.add( partner );
+
     const BOXES = 10;
 
     for ( let i = 0; i < BOXES; i ++ ) {
@@ -151,6 +158,32 @@
       group.add( object );
 
     }
+
+    // GLTFLOADER
+    const loader = new GLTFLoader().setPath('/resources/head/');
+    loader.load( 'scene.gltf', function(gltf){
+      let partnerHead = gltf.scene;
+      partnerHead.scale.set(1.0,1.0,1.0);
+      partnerHead.position.set(0,1,0);
+      let y_angle = 180;
+      y_angle = y_angle * 3.14 / 180.0;
+      partnerHead.rotation.set(0,y_angle,0);
+      partner.add(partnerHead);
+    })
+    loader.setPath('/resources/hand/');
+    loader.load( 'scene.gltf', function(gltf){
+      let partnerHandL = gltf.scene;
+      partnerHandL.scale.set(0.01,0.01,0.01);
+      partnerHandL.position.set(0.5,0.5,0);
+      partner.add(partnerHandL);
+    })
+
+    loader.load( 'scene.gltf', function(gltf){
+      let partnerHandR = gltf.scene;
+      partnerHandR.scale.set(0.01,0.01,0.01);
+      partnerHandR.position.set(-0.5,0.5,0);
+      partner.add(partnerHandR);
+    })
 
     //
 
@@ -232,6 +265,7 @@
   //
 
   function animate() {
+
 
     renderer.setAnimationLoop( render );
 
@@ -322,10 +356,18 @@
 
   }
 
+  function updatePartnerAvatar() {
+    let head;
+    let handR;
+    let handL;
+    //you can change head angle down here
+    partner.rotation.y += 0.01;
+  }
+
   function render() {
 
     handleCollisions();
-
+    updatePartnerAvatar();
     renderer.render( scene, camera );
 
   }
@@ -357,7 +399,7 @@
     </form>
     -->
   </div>
-  <script type="text/javascript" src="/main.js"></script>
+  <!-- <script type="text/javascript" src="/main.js"></script> -->
 
   
 </body>

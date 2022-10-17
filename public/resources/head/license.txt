@@ -1,0 +1,11 @@
+Model Information:
+* title:	Andrew Loomis Head
+* source:	https://sketchfab.com/3d-models/andrew-loomis-head-d2020b07408b4f238004f04d082a3193
+* author:	Vivek Aakash (https://sketchfab.com/iamvivekaakash)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Andrew Loomis Head" (https://sketchfab.com/3d-models/andrew-loomis-head-d2020b07408b4f238004f04d082a3193) by Vivek Aakash (https://sketchfab.com/iamvivekaakash) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
