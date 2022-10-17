@@ -15,10 +15,14 @@ let calls = new Array();
 let myVideoStream;
 let myPeerId;
 
+// TODO:
+// 전반적으로 비디오와 관련된 코드 제거
+// 오디오만 연결
+
 navigator.mediaDevices
   .getUserMedia({
     audio: true,
-    video: true,
+    video: false,
   })
   .then((stream) => {
     myVideoStream = stream;
@@ -29,7 +33,7 @@ navigator.mediaDevices
       const video = document.createElement("video");
 
       call.on("stream", (userVideoStream) => {
-        addVideoStream(video, userVideoStream);
+        // addVideoStream(video, userVideoStream);
       });
       calls.push({
         cal : call,
@@ -66,19 +70,22 @@ const connectToNewUser = (peerId, stream) => {
 
   call.on("stream", (userVideoStream) => {
     console.log("Stream established with ", call.peer);
-    addVideoStream(video, userVideoStream);
+    // TODO:
+    // 오디오 연결 잘 되는지 테스트하기
+    // addVideoStream(video, userVideoStream);
   });
   calls.push({ // 전화거는쪽
     cal: call,
     video: video
   });
 
+  // TODO :
+  // 새로운 유저가 접속될때 새로운 더미를 생성하는 코드
   conn.on('open', () => {
     console.log("DataChannel connected with ", conn.peer);
     conn.on('data', (data) => {
-      let chatArea = document.getElementById('chatArea');
-      chatArea.append("\n" + data.username + " : " + data.msg);
-      document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
+      // TODO:
+      // 위치 데이터값이 들어왔을때 더미의 위치를 갱신하는 코드
     });
     
     conns.push(conn);
@@ -91,7 +98,6 @@ const addVideoStream = (video, stream) => {
   video.addEventListener("loadedmetadata", () => {
     video.play();
     videoGrid.append(video);
-    // video.remove();
   });
 };
 
@@ -110,21 +116,4 @@ socket.on("user has left",(disPeerId)=> {
       removedConn[0].close();
     }
   }
-});
-
-// Chat send button onclicked
-chatForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  let chatInput = document.getElementById('chatInput');
-  let chatArea = document.getElementById('chatArea');
-  chatArea.append("\n" + username + " : " + chatInput.value);
-  document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
-
-  conns.forEach((conn) => {
-    conn.send({
-        username: username,
-        msg: chatInput.value,
-    });
-  })
-  chatInput.value = "";
 });
