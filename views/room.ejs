@@ -370,15 +370,16 @@
   function render() {
 
     handleCollisions();
-    conns.forEach((conn) => {
-    conn.send({
-        username: username,
-        postion: camera.position,
-        rotation: camera.rotation,
-        // TODO:
-        // 왼손 오른손 컨트롤러 위치도 보내기
-    });
-  })
+  //   conns.forEach((conn) => {
+  //     console.log(conn)
+  //   conn.send({
+  //       username: username,
+  //       postion: camera.position,
+  //       rotation: camera.rotation,
+  //       // TODO:
+  //       // 왼손 오른손 컨트롤러 위치도 보내기
+  //   });
+  // })
     renderer.render( scene, camera );
   }
 

@@ -4,7 +4,7 @@ let socket = io("/", {
 
 let videoGrid = document.getElementById("video-grid");
 let myVideo = document.createElement("video");
-let chatForm = document.getElementById('chatForm');
+//let chatForm = document.getElementById('chatForm');
 myVideo.muted = true;
 
 let username = prompt('Enter username', Math.random().toString(36).substring(2, 12));
@@ -22,7 +22,7 @@ let myPeerId;
 navigator.mediaDevices
   .getUserMedia({
     audio: true,
-    video: false,
+    video: false
   })
   .then((stream) => {
     myVideoStream = stream;
@@ -33,7 +33,7 @@ navigator.mediaDevices
       const video = document.createElement("video");
 
       call.on("stream", (userVideoStream) => {
-        // addVideoStream(video, userVideoStream);
+        addVideoStream(video, userVideoStream);
       });
       calls.push({
         cal : call,
@@ -55,9 +55,11 @@ peer.on('connection', function (conn) {
   conn.on('open', () => {
     conn.on('data', (data) => {
       console.log("Datachannel received from ", conn.peer);
-      var chatArea = document.getElementById('chatArea');
-      chatArea.append("\n" + data.username + " : " + data.msg);
-      document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
+
+
+      //var chatArea = document.getElementById('chatArea');
+      //chatArea.append("\n" + data.username + " : " + data.msg);
+      //document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
     });
     conns.push(conn);
   })
@@ -72,7 +74,7 @@ const connectToNewUser = (peerId, stream) => {
     console.log("Stream established with ", call.peer);
     // TODO:
     // 오디오 연결 잘 되는지 테스트하기
-    // addVideoStream(video, userVideoStream);
+    addVideoStream(video, userVideoStream);
   });
   calls.push({ // 전화거는쪽
     cal: call,
@@ -97,7 +99,7 @@ const addVideoStream = (video, stream) => {
   video.srcObject = stream;
   video.addEventListener("loadedmetadata", () => {
     video.play();
-    videoGrid.append(video);
+    //videoGrid.append(video);
   });
 };
 

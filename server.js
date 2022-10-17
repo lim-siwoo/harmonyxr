@@ -5,7 +5,7 @@ let port = 8006;
 let server = require('http').createServer(app);
 var compression = require('compression')
 
-let io = require('socket.io')(server); // 임포트
+let io = require('socket.io')(server);
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
 let roomList = new Array();
@@ -58,7 +58,7 @@ io.on('connection', (socket) => {
             if(roomList[key].userCount < 1) {
               roomList.splice(key, 1);
             } else{
-              io.to(roomname).emit("user has left", socket.data.peerId);// disconnect된 소켓 제외 나머지 소켓한테 연락
+              io.to(roomname).emit("user has left", socket.data.peerId);
             }
           }
         }
