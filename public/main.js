@@ -56,8 +56,7 @@ peer.on('connection', function (conn) {
   conn.on('open', () => {
     conn.on('data', (data) => {
       console.log("Datachannel received from ", conn.peer);
-
-
+      console.log("Received Data", data);
       //var chatArea = document.getElementById('chatArea');
       //chatArea.append("\n" + data.username + " : " + data.msg);
       //document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
@@ -89,6 +88,8 @@ const connectToNewUser = (peerId, stream) => {
     conn.on('data', (data) => {
       // TODO:
       // 위치 데이터값이 들어왔을때 더미의 위치를 갱신하는 코드
+      console.log("Datachannel received from ", conn.peer);
+      console.log("Received Data", data);
     });
     
     conns.push(conn);
