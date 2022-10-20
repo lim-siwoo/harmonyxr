@@ -5,7 +5,7 @@ let port = 8006;
 let server = require('http').createServer(app);
 var compression = require('compression')
 
-let io = require('socket.io')(server); // 임포트
+let io = require('socket.io')(server);
 const wrap = middleware => (socket, next) => middleware(socket.request, {}, next);
 
 let roomList = new Array();
@@ -47,7 +47,10 @@ io.on('connection', (socket) => {
     socket.data.peerId = peerId; // peerid가 생길 때마다 저장
     socket.data.username = username;
   });
+  socket.on("throwPositions",(sockid, username, cPos, cRot, con1Pos, con2Pos)=>{
+    socket.broadcast.emit("getPositions", socket.id, username, cPos, cRot, con1Pos, con2Pos);
 
+  })
   socket.on("disconnecting", (reason) => {
     for (const roomname of socket.rooms) { // 소켓이 속한 룸의 정보
       if (roomname !== socket.id) {
@@ -58,15 +61,15 @@ io.on('connection', (socket) => {
             if(roomList[key].userCount < 1) {
               roomList.splice(key, 1);
             } else{
-              io.to(roomname).emit("user has left", socket.data.peerId);// disconnect된 소켓 제외 나머지 소켓한테 연락
+              io.to(roomname).emit("user has left", socket.data.peerId);
             }
           }
         }
       }
     }
+
   });
 });
-
 server.listen(port, function () { // Open server
   console.log(`Listening on http://localhost:${port}/`);
 });
