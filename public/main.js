@@ -18,6 +18,7 @@ let controls, group;
 let audioCtx = null;
 let networking;
 
+let v = new THREE.Vector3(); // vector temp for compare collision
 let username = prompt('Enter username', Math.random().toString(36).substring(2, 12));
 // minor pentatonic scale, so whichever notes is striked would be more pleasant
 const musicScale = [0, 3, 5, 7, 10];
@@ -92,6 +93,8 @@ function init() {
     group.position.z = - 0.5;
     scene.add(group);
 
+
+
     const BOXES = 10;
 
     for (let i = 0; i < BOXES; i++) {
@@ -119,11 +122,7 @@ function init() {
         group.add(object);
 
     }
-
     
-
-    //
-
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -229,11 +228,10 @@ function handleCollisions() {
             radius: 0.03,
             center: grip.position
         };
-
+        
         const supportHaptic = 'hapticActuators' in gamepad && gamepad.hapticActuators != null && gamepad.hapticActuators.length > 0;
 
         for (let i = 0; i < group.children.length; i++) {
-
             const child = group.children[i];
             box.setFromObject(child);
             if (box.intersectsSphere(sphere)) {
@@ -296,10 +294,40 @@ function handleCollisions() {
 
 }
 
+// function partnerCollisions(){ //따로 빼야하는데 Partner.js로 빼기힘들어보인다고 생각함.
+
+//     for(let g =0; g < partner.children.length; g++){
+
+//         for (let i = 0; i < group.children.length; i++) {
+//             const child = group.children[i];
+//             box.setFromObject(child);
+//             partner.children[g].getWorldPosition(v);//왜 실제 월드 좌표가 아니라 로컬로 나올까 실제좌표로 되도록 수정해야함.
+//             const sphere = {
+//                 radius: 0.03,
+//                 center: v
+//             };
+//             console.log(v)
+//             if (box.intersectsSphere(sphere)) {//왼손이랑 닿았을때
+//                 console.log("접촉함!!!!")// 제대로 작동함
+//                 child.material.emissive.b = 1;
+//                 const intensity = child.userData.index / group.children.length;
+//                 child.scale.setScalar(1 + Math.random() * 0.1 * intensity);//왜 아무일도 안일어나지?
+//                 // child.position.z -= 0.01; //디버깅용
+//                 // group.position.z -= 0.01; //디버깅용
+//                 const musicInterval = musicScale[child.userData.index % musicScale.length] + 12 * Math.floor(child.userData.index / musicScale.length);
+//                 // oscillators[g].frequency.value = 110 * Math.pow(2, musicInterval / 12);
+//                 // group.children[i].collided = true;
+    
+//             }
+    
+//         }
+//     }
+// }
+
 let cnt = 0;
 
 function render() {
-
+    // partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
     handleCollisions();
     if(cnt == 10 ) {
         cnt = 0;
