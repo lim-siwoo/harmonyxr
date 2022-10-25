@@ -1,123 +1,125 @@
-"use strict";
-let socket = io("/", {
-  transports: ["websocket"]
-});
+import { PlayerData } from "./types/PlayerData.js";
+import { Partner } from "./types/Partner.js";
+class Networking {
+  constructor(camera, controller1, controller2, roomName, username, scene) {
+    this.camera = camera;
+    this.controller1 = controller1;
+    this.controller2 = controller2;
+    this.scene = scene;
 
-//let videoGrid = document.getElementById("video-grid");
-let myVideo = document.createElement("video");
-//let chatForm = document.getElementById('chatForm');
-myVideo.muted = true;
+    this.socket = io("/", {
+      transports: ["websocket"],
+    });
 
-let username = prompt('Enter username', Math.random().toString(36).substring(2, 12));
-let peer = new Peer();
-let conns = new Array(); // 동접한 사람의 data channel
-let calls = new Array();
+    this.myVideo = document.createElement("video");
+    this.myVideo.muted = true;
 
-let myVideoStream;
-let myPeerId;
+    this.peer = new Peer();
+    this.conns = new Array(); // 동접한 사람의 data channel
+    this.calls = new Array();
+    this.players = new Array();
 
-// TODO:
-// 전반적으로 비디오와 관련된 코드 제거
-// 오디오만 연결
+    this.myVideoStream;
+    this.myPeerId;
 
-navigator.mediaDevices
-  .getUserMedia({
-    audio: true,
-    video: false
-  })
-  .then((stream) => {
-    myVideoStream = stream;
-    addVideoStream(myVideo, stream);
+    navigator.mediaDevices
+      .getUserMedia({
+        audio: true,
+        video: false,
+      })
+      .then((stream) => {
+        this.myVideoStream = stream;
+        this.myVideo.srcObject = stream;
+        this.myVideo.addEventListener("loadedmetadata", () => {
+          this.myVideo.play();
+        });
+        this.peer.on("call", (call) => {
+          call.answer(stream);
+          const video = document.createElement("video");
 
-    peer.on("call", (call) => {
-      call.answer(stream);
-      const video = document.createElement("video");
+          call.on("stream", (userVideoStream) => {
+            video.srcObject = userVideoStream;
+            video.addEventListener("loadedmetadata", () => {
+              video.play();
+            });
+          });
+          this.calls.push({
+            cal: call,
+            video: video,
+          });
+        });
 
-      call.on("stream", (userVideoStream) => {
-        addVideoStream(video, userVideoStream);
+        this.socket.on("user-connected", (peerId) => {
+          this.#connectToNewUser(peerId, stream); // 전화를 주는 클라이언트
+        });
       });
-      calls.push({
-        cal : call,
-        video: video
+
+    this.peer.on("open", (peerId) => {
+      this.socket.emit("join-room", roomName, peerId, username);
+      this.myPeerId = peerId;
+    });
+
+    this.peer.on("connection", (conn) => {
+      console.log("Connection Received ", conn.peer);
+      this.conns.push(conn);
+      let partner = new Partner(conn);
+      this.scene.add(partner.partner);
+    });
+
+    this.socket.on("user has left", (disPeerId) => {
+      console.log(disPeerId, " is left");
+      for (let key of this.calls.keys()) {
+        if (this.calls[key].cal.peer === disPeerId) {
+          let removedCall = this.calls.splice(key, 1);
+          removedCall[0].video.remove();
+          removedCall[0].cal.close();
+        }
+      }
+      for (let key of this.conns.keys()) {
+        if (this.conns[key].peer === disPeerId) {
+          let removedConn = this.conns.splice(key, 1);
+          removedConn[0].close();
+        }
+      }
+    });
+
+    // setInterval(this.broadcastToPlayers, 1000);
+  }
+
+  #connectToNewUser(peerId, stream) {
+    console.log("Connect to user ", peerId);
+    const call = this.peer.call(peerId, stream);
+    const conn = this.peer.connect(peerId);
+    const video = document.createElement("video");
+
+    call.on("stream", (userVideoStream) => {
+      console.log("Stream established with ", call.peer);
+      video.srcObject = userVideoStream;
+      video.addEventListener("loadedmetadata", () => {
+        video.play();
       });
     });
-
-    socket.on("user-connected", (peerId) => {
-      connectToNewUser(peerId, stream); // 전화를 주는 클라이언트
+    this.calls.push({
+      // 전화거는쪽
+      cal: call,
+      video: video,
     });
-  });
 
-peer.on("open", (peerId) => {
-  socket.emit("join-room", roomname, peerId, username);
-  myPeerId = peerId;
-});
-
-peer.on('connection', function (conn) {
-  conn.on('open', () => {
-    conn.on('data', (data) => {
-      console.log("Datachannel received from ", conn.peer);
-      console.log("Received Data", data);
-      //var chatArea = document.getElementById('chatArea');
-      //chatArea.append("\n" + data.username + " : " + data.msg);
-      //document.getElementById("chatArea").scrollTop = document.getElementById("chatArea").scrollHeight;
-    });
-    conns.push(conn);
-  })
-});
-
-const connectToNewUser = (peerId, stream) => {
-  const call = peer.call(peerId, stream);
-  const conn = peer.connect(peerId);
-  const video = document.createElement("video");
-
-  call.on("stream", (userVideoStream) => {
-    console.log("Stream established with ", call.peer);
-    // TODO:
-    // 오디오 연결 잘 되는지 테스트하기
-    addVideoStream(video, userVideoStream);
-  });
-  calls.push({ // 전화거는쪽
-    cal: call,
-    video: video
-  });
-
-  // TODO :
-  // 새로운 유저가 접속될때 새로운 더미를 생성하는 코드
-  conn.on('open', () => {
-    console.log("DataChannel connected with ", conn.peer);
-    conn.on('data', (data) => {
-      // TODO:
-      // 위치 데이터값이 들어왔을때 더미의 위치를 갱신하는 코드
-      console.log("Datachannel received from ", conn.peer);
-      console.log("Received Data", data);
-    });
-    
-    conns.push(conn);
-  });
-
-};
-
-const addVideoStream = (video, stream) => {
-  video.srcObject = stream;
-  video.addEventListener("loadedmetadata", () => {
-    video.play();
-    //videoGrid.append(video);
-  });
-};
-
-socket.on("user has left",(disPeerId)=> {
-  console.log(disPeerId, " is left");
-  for (let key of calls.keys()) {
-    if(calls[key].cal.peer === disPeerId){
-      let removedCall = calls.splice(key, 1);
-      removedCall[0].video.remove();
-      removedCall[0].cal.close();
-    }
+    this.conns.push(conn);
+    let partner = new Partner(conn);
+    this.scene.add(partner.partner);
   }
-  for (let key of conns.keys()) {
-    if(conns[key].peer === disPeerId){
-      let removedConn= conns.splice(key, 1);
-      removedConn[0].close();
-    }
+
+  broadcastToPlayers() {
+    let playerData = new PlayerData(
+      this.camera,
+      this.controller1,
+      this.controller2
+    );
+    this.conns.forEach((conn) => {
+      conn.send(playerData);
+    });
   }
-});
+}
+
+export { Networking };

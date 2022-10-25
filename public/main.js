@@ -3,6 +3,8 @@ import { OrbitControls } from './libs/OrbitControls.js';
 import { VRButton } from './libs/VRButton.js';
 import { XRControllerModelFactory } from './libs/XRControllerModelFactory.js';
 import { GLTFLoader } from './libs/loaders/GLTFLoader.js';
+import { Networking } from './networking.js';
+import {PlayerData} from "./types/PlayerData.js";
 
 let container;
 let camera, scene, renderer;
@@ -13,9 +15,10 @@ const box = new THREE.Box3();
 const controllers = [];
 const oscillators = [];
 let controls, group;
-let partner;
 let audioCtx = null;
+let networking;
 
+let username = prompt('Enter username', Math.random().toString(36).substring(2, 12));
 // minor pentatonic scale, so whichever notes is striked would be more pleasant
 const musicScale = [0, 3, 5, 7, 10];
 
@@ -55,7 +58,7 @@ function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x808080);
 
-    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10);
+    camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 10);
     camera.position.set(0, 1.6, 3);
 
     controls = new OrbitControls(camera, container);
@@ -89,10 +92,6 @@ function init() {
     group.position.z = - 0.5;
     scene.add(group);
 
-    partner = new THREE.Group();
-    // group.position.z = - 0.5;
-    scene.add(partner);
-
     const BOXES = 10;
 
     for (let i = 0; i < BOXES; i++) {
@@ -121,31 +120,7 @@ function init() {
 
     }
 
-    // GLTFLOADER
-    const loader = new GLTFLoader().setPath('/resources/head/');
-    loader.load('scene.gltf', function (gltf) {
-        let partnerHead = gltf.scene;
-        partnerHead.scale.set(1.0, 1.0, 1.0);
-        partnerHead.position.set(0, 1, 0);
-        let y_angle = 180;
-        y_angle = y_angle * 3.14 / 180.0;
-        partnerHead.rotation.set(0, y_angle, 0);
-        partner.add(partnerHead);
-    })
-    loader.setPath('/resources/hand/');
-    loader.load('scene.gltf', function (gltf) {
-        let partnerHandL = gltf.scene;
-        partnerHandL.scale.set(0.01, 0.01, 0.01);
-        partnerHandL.position.set(0.5, 0.5, 0);
-        partner.add(partnerHandL);
-    })
-
-    loader.load('scene.gltf', function (gltf) {
-        let partnerHandR = gltf.scene;
-        partnerHandR.scale.set(0.01, 0.01, 0.01);
-        partnerHandR.position.set(-0.5, 0.5, 0);
-        partner.add(partnerHandR);
-    })
+    
 
     //
 
@@ -191,6 +166,9 @@ function init() {
 
     window.addEventListener('resize', onWindowResize);
 
+    networking = new Networking(camera, controller1, controller2, roomname, username, scene);
+
+    // setInterval(networking.broadcastToPlayers, 1000);
 }
 
 function controllerConnected(evt) {
@@ -318,50 +296,15 @@ function handleCollisions() {
 
 }
 
-function updatePartnerAvatar() {
-    let head;
-    let handR;
-    let handL;
-    //you can change head angle down here
-    partner.rotation.y += 0.01;
+let cnt = 0;
 
-}
-
-var cnt = 0;
 function render() {
 
     handleCollisions();
-    // "use strict";
-    //console.log("conn.on")
-    cnt++
-    if (cnt === 60) {
+    if(cnt == 10 ) {
         cnt = 0;
-        // for문을 돌리는게 문제가 아니라 send가 아무런 배경없이 나온것이 문제 -> socket으로 바꿔서 throw
-        // socket.emit("throwPositions", socket.id, username, camera.position, camera.rotation, controller1.position, controller2.position);
-        conns.forEach((conn) => {
-            console.log("conn.on", username);
-            conn.send({
-                // 유저 id
-                username: username,
-                // head 위치와 회전
-                position: camera.position,
-                rotation: {
-                    x: camera.rotation.x,
-                    y: camera.rotation.y,
-                    z: camera.rotation.z,
-                },
-                //손의 위치 -> 손의 회전값은 안보내도 될까?
-                controllerL: controller1.position,
-                controllerR: controller2.position
-
-            });
-        });
+        networking.broadcastToPlayers();
     }
-
-    // socket.on("getPositions", (sockid, user, cPos,cRot, con1Pos,con2Pos)=>{
-    //   console.log("sockid : "+sockid)
-    //   console.log("user : "+user)
-
-    // })
+    cnt++;
     renderer.render(scene, camera);
 }
