@@ -1,7 +1,8 @@
 import { PlayerData } from "./types/PlayerData.js";
 import { Partner } from "./types/Partner.js";
 class Networking {
-  constructor(camera, controller1, controller2, roomName, username, scene) {
+  constructor(partners, camera, controller1, controller2, roomName, username, scene) {
+    this.partners = partners;
     this.camera = camera;
     this.controller1 = controller1;
     this.controller2 = controller2;
@@ -107,6 +108,7 @@ class Networking {
 
     this.conns.push(conn);
     let partner = new Partner(conn);
+    this.partners.push(partner);
     this.scene.add(partner.partner);
   }
 

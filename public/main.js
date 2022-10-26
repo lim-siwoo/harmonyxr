@@ -7,6 +7,7 @@ import { Networking } from './networking.js';
 import {PlayerData} from "./types/PlayerData.js";
 
 let container;
+let partners = new Array();
 let camera, scene, renderer;
 let controller1, controller2;
 let controllerGrip1, controllerGrip2;
@@ -31,7 +32,6 @@ function initAudio() {
     if (audioCtx !== null) {
 
         return;
-
     }
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -165,7 +165,7 @@ function init() {
 
     window.addEventListener('resize', onWindowResize);
 
-    networking = new Networking(camera, controller1, controller2, roomname, username, scene);
+    networking = new Networking(partners, camera, controller1, controller2, roomname, username, scene);
 
     // setInterval(networking.broadcastToPlayers, 1000);
 }
