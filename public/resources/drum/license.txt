@@ -1,0 +1,11 @@
+Model Information:
+* title:	Drum set with Blender armature
+* source:	https://sketchfab.com/3d-models/drum-set-with-blender-armature-755b8840d6b941819a4366ca15c94879
+* author:	Akio Nishimura (https://sketchfab.com/akionux)
+
+Model License:
+* license type:	CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
+* requirements:	Author must be credited. Modified versions must have the same license. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Drum set with Blender armature" (https://sketchfab.com/3d-models/drum-set-with-blender-armature-755b8840d6b941819a4366ca15c94879) by Akio Nishimura (https://sketchfab.com/akionux) licensed under CC-BY-SA-4.0 (http://creativecommons.org/licenses/by-sa/4.0/)
