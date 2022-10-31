@@ -296,41 +296,45 @@ function handleCollisions() {
 
 // TODO:
 // 파트너가 손으로 악기를 건드리면 소리가 나게 고쳐야함. 현재는 안되서 주석처리
-// function partnerCollisions(){ 
+function partnerCollisions(){ 
 
-//     for(let g =0; g < partner.children.length; g++){
+    for (let i = 0; i < group.children.length; i++) {
+        group.children[i].collided = false;
+    }
 
-//         for (let i = 0; i < group.children.length; i++) {
-//             const child = group.children[i];
-//             box.setFromObject(child);
-//             partner.children[g].getWorldPosition(v);//왜 실제 월드 좌표가 아니라 로컬로 나올까 실제좌표로 되도록 수정해야함.
-//             const sphere = {
-//                 radius: 0.03,
-//                 center: v
-//             };
-//             console.log(v)
-//             if (box.intersectsSphere(sphere)) {//왼손이랑 닿았을때
-//                 console.log("접촉함!!!!")// 제대로 작동함
-//                 child.material.emissive.b = 1;
-//                 const intensity = child.userData.index / group.children.length;
-//                 child.scale.setScalar(1 + Math.random() * 0.1 * intensity);//왜 아무일도 안일어나지?
-//                 // child.position.z -= 0.01; //디버깅용
-//                 // group.position.z -= 0.01; //디버깅용
-//                 const musicInterval = musicScale[child.userData.index % musicScale.length] + 12 * Math.floor(child.userData.index / musicScale.length);
-//                 // oscillators[g].frequency.value = 110 * Math.pow(2, musicInterval / 12);
-//                 // group.children[i].collided = true;
-    
-//             }
-    
-//         }
-//     }
-// }
+    for(let j =0; j < partners.length; j++){
+        for(let g =0; g < partners[j].partner.children.length; g++){
+            for (let i = 0; i < group.children.length; i++) {
+                const child = group.children[i];
+                box.setFromObject(child);
+                partners[j].partner.children[g].getWorldPosition(v);//왜 실제 월드 좌표가 아니라 로컬로 나올까 실제좌표로 되도록 수정해야함.
+                const sphere = {
+                    radius: 0.03,
+                    center: v
+                };
+                // console.log(v)
+                if (box.intersectsSphere(sphere)) {//왼손이랑 닿았을때
+                    // console.log("접촉함!!!!")// 제대로 작동함
+                    child.material.emissive.b = 1;
+                    const intensity = child.userData.index / group.children.length;
+                    child.scale.setScalar(1 + Math.random() * 0.1 * intensity);//왜 아무일도 안일어나지?
+                    const musicInterval = musicScale[child.userData.index % musicScale.length] + 12 * Math.floor(child.userData.index / musicScale.length);
+                    // oscillators[g].frequency.value = 110 * Math.pow(2, musicInterval / 12);
+                    // controller.colliding = true;
+                    group.children[i].collided = true;
+
+                }
+
+            }
+        }
+        }
+}
 
 let cnt = 0;
 
 function render() {
-    // partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
     handleCollisions();
+    partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
     if(cnt == 1 ) {
         cnt = 0;
         networking.broadcastToPlayers();
