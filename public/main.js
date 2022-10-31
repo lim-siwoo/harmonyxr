@@ -165,7 +165,7 @@ function init() {
 
     window.addEventListener('resize', onWindowResize);
 
-    networking = new Networking(partners, camera, controller1, controller2, roomname, username, scene);
+    networking = new Networking(partners, camera, controllerGrip1, controllerGrip2, roomname, username, scene);
 
     // setInterval(networking.broadcastToPlayers, 1000);
 }
@@ -294,7 +294,9 @@ function handleCollisions() {
 
 }
 
-// function partnerCollisions(){ //따로 빼야하는데 Partner.js로 빼기힘들어보인다고 생각함.
+// TODO:
+// 파트너가 손으로 악기를 건드리면 소리가 나게 고쳐야함. 현재는 안되서 주석처리
+// function partnerCollisions(){ 
 
 //     for(let g =0; g < partner.children.length; g++){
 
@@ -329,7 +331,7 @@ let cnt = 0;
 function render() {
     // partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
     handleCollisions();
-    if(cnt == 10 ) {
+    if(cnt == 1 ) {
         cnt = 0;
         networking.broadcastToPlayers();
     }

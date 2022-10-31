@@ -17,26 +17,29 @@ constructor (conn){
     const loader = new GLTFLoader().setPath('/resources/head/');
     loader.load('scene.gltf', (gltf) => {
         gltf.scene.scale.set(1.0, 1.0, 1.0);
-        gltf.scene.position.set(0, 1, 0); // 나중에 연동이되면 이 값은 지워줘야합니다.
+        gltf.scene.position.set(0, 0, 0);
         let y_angle = 180;
         y_angle = y_angle * 3.14 / 180.0;
         gltf.scene.rotation.set(0, y_angle, 0);
         this.head.add(gltf.scene);
+        this.head.name = "head";
         this.partner.add(this.head);
     })
     loader.setPath('/resources/hand/');
     loader.load('scene.gltf', (gltf) => {
         gltf.scene.scale.set(0.01, 0.01, 0.01);
-        gltf.scene.position.set(0.5, 0.5, 0); //나중에 멀티로 연동이 되면 이 값은 지워야합니다.
+        gltf.scene.position.set(0, 0, 0);
         this.leftHand.add(gltf.scene);
+        this.leftHand.name="rightHand";
         this.partner.add(this.leftHand);
     })
 
     loader.load('scene.gltf', (gltf) => {
         let partnerHandR = gltf.scene;
         gltf.scene.scale.set(0.01, 0.01, 0.01);
-        gltf.scene.position.set(-0.5, 0.5, 0); //나중에 멀티로 연동이 되면 이 값은 지워야합니다.
+        gltf.scene.position.set(0, 0, 0);
         this.rightHand.add(gltf.scene);
+        this.rightHand.name="leftHand";
         this.partner.add(this.rightHand);
     })
 
@@ -46,21 +49,22 @@ constructor (conn){
       console.log("DataChannel connected with ", this.conn.peer);
       this.conn.on('data', (data) => {
         console.log("Datachannel received from ", this.conn.peer);
-        console.log("Received Data", data);
+        // console.log("Received Data", data);
         this.partner.position.x = data.position.x;
         this.partner.position.y = data.position.y;
         this.partner.position.z = data.position.z;
-        this.partner.rotation.x = data.rotation.x;
-        this.partner.rotation.y = data.rotation.y;
-        this.partner.rotation.z = data.rotation.z;
-
+        
+        this.head.rotation.x = data.rotation.x;
+        this.head.rotation.y = data.rotation.y;
+        this.head.rotation.z = data.rotation.z;
         // TODO:
-        // 컨트롤러 위치 값도 대입 해줘야함
-        //partner.position = data.position;
-        // this.partner.children[1].position = data.head.position; //머리값도 저장해야해요. 로테이션도요.
-        this.partner.children[1].position = data.controller1.position;
-        this.partner.children[2].position = data.controller2.position;
-
+        // 컨트롤러 위치가 미묘하게 이상함. 고쳐야함
+        this.partner.getObjectByName("leftHand").position.x = data.controller1.position.x - data.position.x;
+        this.partner.getObjectByName("leftHand").position.y = data.controller1.position.y - data.position.y;
+        this.partner.getObjectByName("leftHand").position.z = data.controller1.position.z - data.position.z;
+        this.partner.getObjectByName("rightHand").position.x = data.controller2.position.x - data.position.x;
+        this.partner.getObjectByName("rightHand").position.y = data.controller2.position.y - data.position.y;
+        this.partner.getObjectByName("rightHand").position.z = data.controller2.position.z - data.position.z;
       });
 
     });
