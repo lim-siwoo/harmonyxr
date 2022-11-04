@@ -1,5 +1,6 @@
 import * as THREE from '../build/three.module.js';
 import { GLTFLoader } from '../libs/loaders/GLTFLoader.js';
+import { Guitar } from './Guitar.js';
 
 /*
 * 상대방 3D Model에 대한 class , it called when connectToNewUser is operated.
@@ -11,6 +12,7 @@ constructor (conn){
     this.head = new THREE.Object3D();
     this.rightHand = new THREE.Object3D();
     this.leftHand = new THREE.Object3D();
+    this.isGuitar = false;
 
 
     // GLTFLOADER
@@ -41,6 +43,11 @@ constructor (conn){
         this.rightHand.add(gltf.scene);
         this.rightHand.name="leftHand";
         this.partner.add(this.rightHand);
+
+        // 파트너 손에 기타 추가 (이렇게 하면 되나?)
+        this.guitar = new Guitar(camera);
+        this.guitar.guitar.visible = false;
+        this.partner.add(this.guitar.guitar);
     })
 
     // TODO :
@@ -65,6 +72,9 @@ constructor (conn){
         this.partner.getObjectByName("rightHand").position.x = data.controller2.position.x - data.position.x;
         this.partner.getObjectByName("rightHand").position.y = data.controller2.position.y - data.position.y;
         this.partner.getObjectByName("rightHand").position.z = data.controller2.position.z - data.position.z;
+        
+        // 파트너 기타 보이게할지 결정하는 부분
+        this.guitar.guitar.visible = data.isGuitar;
       });
 
     });

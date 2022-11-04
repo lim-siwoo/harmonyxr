@@ -137,7 +137,7 @@ class Guitar {
         // controller2.addEventListener( 'selectstart', this.onSelectStart );
 		// controller2.addEventListener( 'selectend', this.onSelectEnd );
 
-        
+        // TODO: 파트너 기타와 파트너 손의 충돌 처리를 추가해야 할듯
         
 
         // let collision = this.guitar.getObjectByName("collision");
