@@ -5,6 +5,7 @@ import { XRControllerModelFactory } from './libs/XRControllerModelFactory.js';
 import { GLTFLoader } from './libs/loaders/GLTFLoader.js';
 import { Networking } from './networking.js';
 import {PlayerData} from "./types/PlayerData.js";
+import { Guitar } from './types/Guitar.js';
 
 let container;
 let partners = new Array();
@@ -12,11 +13,13 @@ let camera, scene, renderer;
 let controller1, controller2;
 let controllerGrip1, controllerGrip2;
 const box = new THREE.Box3();
+let guitar;
 
 const controllers = [];
 const oscillators = [];
 let controls, group;
 let audioCtx = null;
+let sound;
 let networking;
 
 let v = new THREE.Vector3(); // vector temp for compare collision
@@ -28,6 +31,21 @@ init();
 animate();
 
 function initAudio() {
+
+    // create an AudioListener and add it to the camera
+    const listener = new THREE.AudioListener();
+    camera.add( listener );
+
+
+    // load a sound and set it as the Audio object's buffer
+    // const audioLoader = new THREE.AudioLoader();
+    // audioLoader.load( '/resources/guitar/a-major.wav', function( buffer ) {
+    //     sound.setBuffer( buffer );
+    //     sound.setLoop( true );
+    //     sound.setVolume( 0.5 );
+    //     sound.play();
+    // });
+
 
     if (audioCtx !== null) {
 
@@ -161,12 +179,14 @@ function init() {
     controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
     scene.add(controllerGrip2);
 
-    //
+    //ADD Instruments - Guitar
 
     window.addEventListener('resize', onWindowResize);
 
     networking = new Networking(partners, camera, controllerGrip1, controllerGrip2, roomname, username, scene);
+    guitar = new Guitar(camera);
 
+    scene.add(guitar.guitar);
     // setInterval(networking.broadcastToPlayers, 1000);
 }
 
@@ -335,6 +355,7 @@ let cnt = 0;
 function render() {
     handleCollisions();
     partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
+    guitar.handleCollisions(controllers,controller1, controller2);
     if(cnt == 1 ) {
         cnt = 0;
         networking.broadcastToPlayers();
