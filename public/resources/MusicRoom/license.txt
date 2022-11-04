@@ -1,0 +1,11 @@
+Model Information:
+* title:	3d Video Mapping Stage
+* source:	https://sketchfab.com/3d-models/3d-video-mapping-stage-9fc9d32d01644f2dbaa0105f81d0c935
+* author:	danartri (https://sketchfab.com/DanartriDonuth)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "3d Video Mapping Stage" (https://sketchfab.com/3d-models/3d-video-mapping-stage-9fc9d32d01644f2dbaa0105f81d0c935) by danartri (https://sketchfab.com/DanartriDonuth) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
