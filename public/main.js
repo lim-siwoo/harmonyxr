@@ -14,6 +14,7 @@ let controller1, controller2;
 let controllerGrip1, controllerGrip2;
 const box = new THREE.Box3();
 let guitar;
+// let guitarDummy = THREE.Object3D();
 
 const controllers = [];
 const oscillators = [];
@@ -185,8 +186,9 @@ function init() {
 
     networking = new Networking(partners, camera, controllerGrip1, controllerGrip2, roomname, username, scene);
     guitar = new Guitar(camera);
-
-    scene.add(guitar.guitar);
+    guitar.guitar.visible = false;
+    
+    controllerGrip1.add(guitar.guitar);
     // setInterval(networking.broadcastToPlayers, 1000);
 }
 
@@ -349,12 +351,29 @@ function partnerCollisions(){
         }
         }
 }
+function takeGuitar() {
+    for(let g =0; g <controllers.length; g++){
+
+        const controller = controllers[1];
+                // controller.colliding = false;
+
+        const { grip, gamepad } = controller;
+
+        if(gamepad.buttons[0].pressed == true & gamepad.buttons[1].pressed == true){
+            guitar.guitar.visible = true;
+        }
+        else{
+            guitar.guitar.visible = false;
+        }
+    }
+}
 
 let cnt = 0;
 
 function render() {
     handleCollisions();
     partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
+    takeGuitar();
     guitar.handleCollisions(controllers,controller1, controller2);
     if(cnt == 1 ) {
         cnt = 0;

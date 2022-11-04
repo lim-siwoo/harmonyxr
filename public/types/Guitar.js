@@ -9,6 +9,7 @@ class Guitar {
     constructor (camera){
         this.guitar = new THREE.Group();
         this.INTERSECTION;
+        this.selected;
 
         const listener = new THREE.AudioListener();
         camera.add( listener );
@@ -32,8 +33,8 @@ class Guitar {
             this.aMajor.setBuffer( buffer );
             this.aMajor.setLoop( false );
             this.aMajor.setVolume( 0.5 );
-            this.aMajor.offset = 0.8;
-            this.aMajor.duration = 3;
+            this.aMajor.offset = 1.3;
+            this.aMajor.duration = 4;
             // this.aMajor.play();
         });
 
@@ -42,7 +43,7 @@ class Guitar {
             this.cMajor.setLoop( false );
             this.cMajor.setVolume( 0.5 );
             this.cMajor.offset = 1;
-            this.cMajor.duration = 3;
+            this.cMajor.duration = 4;
             // this.cMajor.play();
         });
 
@@ -50,8 +51,8 @@ class Guitar {
             this.fMajor.setBuffer( buffer );
             this.fMajor.setLoop( false );
             this.fMajor.setVolume( 0.5 );
-            this.fMajor.offset = 1;
-            this.fMajor.duration = 3;
+            this.fMajor.offset = 2.5;
+            this.fMajor.duration = 4;
             // this.cMajor.play();
         });
 
@@ -59,8 +60,8 @@ class Guitar {
             this.gMajor.setBuffer( buffer );
             this.gMajor.setLoop( false );
             this.gMajor.setVolume( 0.5 );
-            this.gMajor.offset = 1;
-            this.gMajor.duration = 3;
+            this.gMajor.offset = 0.8;
+            this.gMajor.duration = 4;
             // this.cMajor.play();
         });
         
@@ -72,6 +73,8 @@ class Guitar {
         //     this.sound.setVolume( 0.5 );
         //     this.sound.play();
         // });
+
+        
 
         this.box = new THREE.Box3();
         
@@ -106,21 +109,21 @@ class Guitar {
         this.guitar.name = "guitar";
         // this.partner.add(this.head);
         })
-        this.guitar.position.set(0,0.5,0);
+        this.guitar.position.set(0.2,0,0);
         
     }
 
     onSelectStart() {
 
-        this.userData.isSelecting = true;
+        // this.userData.isSelecting = true;
         this.collision.material.color.setHex(0x00ff00);
 
     }
 
     onSelectEnd() {
 
-        this.userData.isSelecting = false;
-        this.collision.material.color.setHex(0xffff00);
+        // this.userData.isSelecting = false;
+        this.collision.material.color.setHex(0xffffff);
     }
 
     handleCollisions(controllers, controller1, controller2) {
@@ -128,11 +131,14 @@ class Guitar {
         this.INTERSECTION = undefined;
         this.guitar.collided = false;
 
-        //안된다 왤까?
-        // controller1.addEventListener( 'selectstart', onSelectStart );
-		// controller1.addEventListener( 'selectend', onSelectEnd );
-        // controller2.addEventListener( 'selectstart', onSelectStart );
-		// controller2.addEventListener( 'selectend', onSelectEnd );
+        // //안된다 왤까?
+        // controller1.addEventListener( 'selectstart', this.onSelectStart );
+		// controller1.addEventListener( 'selectend', this.onSelectEnd );
+        // controller2.addEventListener( 'selectstart', this.onSelectStart );
+		// controller2.addEventListener( 'selectend', this.onSelectEnd );
+
+        
+        
 
         // let collision = this.guitar.getObjectByName("collision");
         // this.box.getBoundingBox(this.guitarCollison);
@@ -141,6 +147,7 @@ class Guitar {
             // controller.colliding = false;
 
             const { grip, gamepad } = controller;
+            
             const sphere = {
             radius: 0.03,
             center: grip.position
@@ -152,10 +159,33 @@ class Guitar {
                     this.guitar.collided = true;
                     this.collision.material.color.setHex(0x000000);
                     this.INTERSECTION = true;
-                    if(this.userData.isSelecting == true){
+                    // const { grip, gamepad } = controller;
+
+                    if(gamepad.buttons[5].pressed == true & gamepad.buttons[4].pressed == false){
+                        // this.aMajor.stop();
+                        if(this.aMajor.isPlaying){
+                            this.aMajor.stop();
+                        }
+                        this.aMajor.play();
+                    }else if(gamepad.buttons[4].pressed == true & gamepad.buttons[5].pressed == false)
+                    {
+                        // this.cMajor.stop();
+                        if(this.cMajor.isPlaying){
+                            this.cMajor.stop();
+                        }
                         this.cMajor.play();
+                    }else if(gamepad.buttons[4].pressed == true & gamepad.buttons[5].pressed == true){
+                        if(this.fMajor.isPlaying){
+                            this.fMajor.stop();
+                        }
+                        this.fMajor.play();
+                    }else{
+                        if(this.gMajor.isPlaying){
+                            this.gMajor.stop();
+                        }
+                        this.gMajor.play();
                     }
-                    this.aMajor.play();
+                    
                 }
                 
             }
