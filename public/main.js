@@ -384,7 +384,8 @@ function render() {
     guitar.handleCollisions(controllers,controller1, controller2);
     if(cnt == 1 ) {
         cnt = 0;
-        networking.broadcastToPlayers();
+        // 기타가 보이는지 정보 추가
+        networking.broadcastToPlayers(guitar.guitar.visible);
     }
     cnt++;
     renderer.render(scene, camera);
