@@ -6,13 +6,16 @@ import { Guitar } from './Guitar.js';
 * 상대방 3D Model에 대한 class , it called when connectToNewUser is operated.
 */
 class Partner {
-constructor (conn){
+constructor (conn, camera){
     this.conn = conn;
     this.partner = new THREE.Group();
     this.head = new THREE.Object3D();
     this.rightHand = new THREE.Object3D();
     this.leftHand = new THREE.Object3D();
     this.isGuitar = false;
+    this.aButton = false;
+    this.bButton = false;
+    this.guitar = new Guitar(camera);
 
 
     // GLTFLOADER
@@ -43,12 +46,14 @@ constructor (conn){
         this.rightHand.add(gltf.scene);
         this.rightHand.name="leftHand";
         this.partner.add(this.rightHand);
-
-        // 파트너 손에 기타 추가 (이렇게 하면 되나?)
-        this.guitar = new Guitar(camera);
         this.guitar.guitar.visible = false;
-        this.partner.add(this.guitar.guitar);
+        this.guitar.guitar.name="guitar";
+        this.partner.getObjectByName("leftHand").add(this.guitar.guitar);
+        // 파트너 손에 기타 추가 (이렇게 하면 되나?)
+        
     })
+    
+    
 
     // TODO :
     // 새로운 유저가 접속될때 새로운 더미를 생성하는 코드
@@ -73,8 +78,18 @@ constructor (conn){
         this.partner.getObjectByName("rightHand").position.y = data.controller2.position.y - data.position.y;
         this.partner.getObjectByName("rightHand").position.z = data.controller2.position.z - data.position.z;
         
+        this.partner.getObjectByName("leftHand").rotation.x = data.controller1.rotation.x - data.rotation.x;
+        this.partner.getObjectByName("leftHand").rotation.y = data.controller1.rotation.y - data.rotation.y;
+        this.partner.getObjectByName("leftHand").rotation.z = data.controller1.rotation.z - data.rotation.z;
+        this.partner.getObjectByName("rightHand").rotation.x = data.controller2.rotation.x - data.rotation.x;
+        this.partner.getObjectByName("rightHand").rotation.y = data.controller2.rotation.y - data.rotation.y;
+        this.partner.getObjectByName("rightHand").rotation.z = data.controller2.rotation.z - data.rotation.z;
+        
+
         // 파트너 기타 보이게할지 결정하는 부분
         this.guitar.guitar.visible = data.isGuitar;
+        this.aButton = data.aButton;
+        this.bButton = data.bButton;
       });
 
     });

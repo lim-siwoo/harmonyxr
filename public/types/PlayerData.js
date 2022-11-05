@@ -1,5 +1,5 @@
 class PlayerData {
-  constructor(camera, controller1, controller2, isGuitar) {
+  constructor(camera, controller1, controller2, isGuitar, aButton, bButton) {
     this.position = {
       x: camera.position.x,
       y: camera.position.y,
@@ -36,6 +36,8 @@ class PlayerData {
     }
     // 현재 기타가 보이는지 정보 전달
     this.isGuitar = isGuitar;
+    this.aButton = aButton;
+    this.bButton = bButton;
   }
 
 };

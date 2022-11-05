@@ -40,15 +40,6 @@ function initAudio() {
     camera.add( listener );
 
 
-    // load a sound and set it as the Audio object's buffer
-    // const audioLoader = new THREE.AudioLoader();
-    // audioLoader.load( '/resources/guitar/a-major.wav', function( buffer ) {
-    //     sound.setBuffer( buffer );
-    //     sound.setLoop( true );
-    //     sound.setVolume( 0.5 );
-    //     sound.play();
-    // });
-
 
     if (audioCtx !== null) {
 
@@ -381,12 +372,20 @@ function render() {
     // handleCollisions();
     // partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
     takeGuitar();
-    guitar.handleCollisions(controllers,controller1, controller2);
+    guitar.handleCollisions(controllers);
     if(cnt == 1 ) {
         cnt = 0;
         // 기타가 보이는지 정보 추가
-        networking.broadcastToPlayers(guitar.guitar.visible);
+        if(controllers.length){
+            const {gamepad} = controllers[0];
+            networking.broadcastToPlayers(guitar.guitar.visible, gamepad.buttons[4].pressed, gamepad.buttons[5].pressed);
+        }
     }
     cnt++;
+    // guitar.handleParnterCollisions(partners);
+    for(let j =0; j < partners.length; j++){
+        // partners[j].guitar.guitar.handlePartnerCollisions(partners[j]);
+    }
+    // guitar.handleParnterCollisions(partners);
     renderer.render(scene, camera);
 }
