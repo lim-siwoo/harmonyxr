@@ -8,6 +8,7 @@ import { Networking } from './networking.js';
 import { Drum } from './types/Drum.js';
 import { PlayerData} from "./types/PlayerData.js";
 import { MusicRoom} from "./types/MusicRoom.js";
+import {Piano} from './types/Piano.js';
 
 
 let container;
@@ -25,8 +26,9 @@ let networking;
 
 let drum;
 let musicRoom;
+let piano;
 
-
+let listener = new THREE.AudioListener();
 let v = new THREE.Vector3(); // vector temp for compare collision
 let username = prompt('Enter username', Math.random().toString(36).substring(2, 12));
 // minor pentatonic scale, so whichever notes is striked would be more pleasant
@@ -132,6 +134,11 @@ function init() {
         group.add(object);
 
     }
+
+    camera.add(listener);
+    piano = new Piano(listener);
+    console.log(piano.object);
+    scene.add(piano.object);
     drum = new Drum(listener);
     scene.add(drum.scene);
     // console.log(drum.scene)
@@ -143,7 +150,7 @@ function init() {
     renderer.shadowMap.enabled = true;
     renderer.xr.enabled = true;
     container.appendChild(renderer.domElement);
-
+    scene
     document.body.appendChild(VRButton.createButton(renderer));
 
     document.getElementById('VRButton').addEventListener('click', () => {
@@ -348,6 +355,9 @@ function render() {
     musicRoom.LightTargetPattrol();
     musicRoom.NeonStickAnimation();
     // handleCollisions();
+    // partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
+    piano.handleCollisions(partners, controllers);
+
     // partnerCollisions(); 
     drum.handleCollisions(partners, controllers);
     if(cnt == 1 ) {
