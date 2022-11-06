@@ -57,8 +57,7 @@ constructor (conn){
         this.head.rotation.x = data.rotation.x;
         this.head.rotation.y = data.rotation.y;
         this.head.rotation.z = data.rotation.z;
-        // TODO:
-        // 컨트롤러 위치가 미묘하게 이상함. 고쳐야함
+   
         this.partner.getObjectByName("leftHand").position.x = data.controller1.position.x - data.position.x;
         this.partner.getObjectByName("leftHand").position.y = data.controller1.position.y - data.position.y;
         this.partner.getObjectByName("leftHand").position.z = data.controller1.position.z - data.position.z;

@@ -4,8 +4,11 @@ import { VRButton } from './libs/VRButton.js';
 import { XRControllerModelFactory } from './libs/XRControllerModelFactory.js';
 import { GLTFLoader } from './libs/loaders/GLTFLoader.js';
 import { Networking } from './networking.js';
+
+import { Drum } from './types/Drum.js';
 import { PlayerData} from "./types/PlayerData.js";
 import { MusicRoom} from "./types/MusicRoom.js";
+
 
 let container;
 let partners = new Array();
@@ -19,7 +22,10 @@ const oscillators = [];
 let controls, group;
 let audioCtx = null;
 let networking;
+
+let drum;
 let musicRoom;
+
 
 let v = new THREE.Vector3(); // vector temp for compare collision
 let username = prompt('Enter username', Math.random().toString(36).substring(2, 12));
@@ -95,7 +101,9 @@ function init() {
     group.position.z = - 0.5;
     // scene.add(group);
 
-
+    const listener = new THREE.AudioListener();
+    camera.add( listener );
+    
 
     const BOXES = 10;
 
@@ -124,6 +132,9 @@ function init() {
         group.add(object);
 
     }
+    drum = new Drum(listener);
+    scene.add(drum.scene);
+    // console.log(drum.scene)
     
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setPixelRatio(window.devicePixelRatio);
@@ -215,133 +226,130 @@ function animate() {
 
 }
 
-// function handleCollisions() {
+function handleCollisions() {
 
-//     for (let i = 0; i < group.children.length; i++) {
+    for (let i = 0; i < group.children.length; i++) {
 
-//         group.children[i].collided = false;
+        group.children[i].collided = false;
 
-//     }
+    }
 
-//     for (let g = 0; g < controllers.length; g++) {
+    for (let g = 0; g < controllers.length; g++) {
 
-//         const controller = controllers[g];
-//         controller.colliding = false;
+        const controller = controllers[g];
+        controller.colliding = false;
 
-//         const { grip, gamepad } = controller;
-//         const sphere = {
-//             radius: 0.03,
-//             center: grip.position
-//         };
+        const { grip, gamepad } = controller;
+        const sphere = {
+            radius: 0.03,
+            center: grip.position
+        };
         
-//         const supportHaptic = 'hapticActuators' in gamepad && gamepad.hapticActuators != null && gamepad.hapticActuators.length > 0;
+        const supportHaptic = 'hapticActuators' in gamepad && gamepad.hapticActuators != null && gamepad.hapticActuators.length > 0;
 
-//         for (let i = 0; i < group.children.length; i++) {
-//             const child = group.children[i];
-//             box.setFromObject(child);
-//             if (box.intersectsSphere(sphere)) {
+        for (let i = 0; i < group.children.length; i++) {
+            const child = group.children[i];
+            box.setFromObject(child);
+            if (box.intersectsSphere(sphere)) {
 
-//                 child.material.emissive.b = 1;
-//                 const intensity = child.userData.index / group.children.length;
-//                 child.scale.setScalar(1 + Math.random() * 0.1 * intensity);
+                child.material.emissive.b = 1;
+                const intensity = child.userData.index / group.children.length;
+                child.scale.setScalar(1 + Math.random() * 0.1 * intensity);
 
-//                 if (supportHaptic) {
+                if (supportHaptic) {
 
-//                     gamepad.hapticActuators[0].pulse(intensity, 100);
+                    gamepad.hapticActuators[0].pulse(intensity, 100);
 
-//                 }
+                }
 
-//                 const musicInterval = musicScale[child.userData.index % musicScale.length] + 12 * Math.floor(child.userData.index / musicScale.length);
-//                 oscillators[g].frequency.value = 110 * Math.pow(2, musicInterval / 12);
-//                 controller.colliding = true;
-//                 group.children[i].collided = true;
+                const musicInterval = musicScale[child.userData.index % musicScale.length] + 12 * Math.floor(child.userData.index / musicScale.length);
+                oscillators[g].frequency.value = 110 * Math.pow(2, musicInterval / 12);
+                controller.colliding = true;
+                group.children[i].collided = true;
 
-//             }
+            }
 
-//         }
+        }
 
 
 
-//         if (controller.colliding) {
+        if (controller.colliding) {
 
-//             if (!controller.playing) {
+            if (!controller.playing) {
 
-//                 controller.playing = true;
-//                 oscillators[g].connect(audioCtx.destination);
+                controller.playing = true;
+                oscillators[g].connect(audioCtx.destination);
 
-//             }
+            }
 
-//         } else {
+        } else {
 
-//             if (controller.playing) {
+            if (controller.playing) {
 
-//                 controller.playing = false;
-//                 oscillators[g].disconnect(audioCtx.destination);
+                controller.playing = false;
+                oscillators[g].disconnect(audioCtx.destination);
 
-//             }
+            }
 
-//         }
+        }
 
-//     }
+    }
 
-//     for (let i = 0; i < group.children.length; i++) {
+    for (let i = 0; i < group.children.length; i++) {
 
-//         const child = group.children[i];
-//         if (!child.collided) {
+        const child = group.children[i];
+        if (!child.collided) {
 
-//             // reset uncollided boxes
-//             child.material.emissive.b = 0;
-//             child.scale.setScalar(1);
+            // reset uncollided boxes
+            child.material.emissive.b = 0;
+            child.scale.setScalar(1);
 
-//         }
+        }
 
-//     }
+    }
 
-// }
+}
 
-// TODO:
-// 파트너가 손으로 악기를 건드리면 소리가 나게 고쳐야함. 현재는 안되서 주석처리
-// function partnerCollisions(){ 
+function partnerCollisions(){ 
 
-//     for (let i = 0; i < group.children.length; i++) {
-//         group.children[i].collided = false;
-//     }
+    for (let i = 0; i < group.children.length; i++) {
+        group.children[i].collided = false;
+    }
 
-//     for(let j =0; j < partners.length; j++){
-//         for(let g =0; g < partners[j].partner.children.length; g++){
-//             for (let i = 0; i < group.children.length; i++) {
-//                 const child = group.children[i];
-//                 box.setFromObject(child);
-//                 partners[j].partner.children[g].getWorldPosition(v);//왜 실제 월드 좌표가 아니라 로컬로 나올까 실제좌표로 되도록 수정해야함.
-//                 const sphere = {
-//                     radius: 0.03,
-//                     center: v
-//                 };
-//                 // console.log(v)
-//                 if (box.intersectsSphere(sphere)) {//왼손이랑 닿았을때
-//                     // console.log("접촉함!!!!")// 제대로 작동함
-//                     child.material.emissive.b = 1;
-//                     const intensity = child.userData.index / group.children.length;
-//                     child.scale.setScalar(1 + Math.random() * 0.1 * intensity);//왜 아무일도 안일어나지?
-//                     const musicInterval = musicScale[child.userData.index % musicScale.length] + 12 * Math.floor(child.userData.index / musicScale.length);
-//                     // oscillators[g].frequency.value = 110 * Math.pow(2, musicInterval / 12);
-//                     // controller.colliding = true;
-//                     group.children[i].collided = true;
+    for(let j =0; j < partners.length; j++){
+        for(let g =0; g < partners[j].partner.children.length; g++){
+            for (let i = 0; i < group.children.length; i++) {
+                const child = group.children[i];
+                box.setFromObject(child);
+                partners[j].partner.children[g].getWorldPosition(v);//왜 실제 월드 좌표가 아니라 로컬로 나올까 실제좌표로 되도록 수정해야함.
+                const sphere = {
+                    radius: 0.03,
+                    center: v
+                };
+                // console.log(v)
+                if (box.intersectsSphere(sphere)) {//왼손이랑 닿았을때
+                    // console.log("접촉함!!!!")// 제대로 작동함
+                    child.material.emissive.b = 1;
+                    const intensity = child.userData.index / group.children.length;
+                    child.scale.setScalar(1 + Math.random() * 0.1 * intensity);
+                    const musicInterval = musicScale[child.userData.index % musicScale.length] + 12 * Math.floor(child.userData.index / musicScale.length);
+                    // oscillators[g].frequency.value = 110 * Math.pow(2, musicInterval / 12);
+                    // controller.colliding = true;
+                    group.children[i].collided = true;
+                }
+            }
+        }
+    }
+}
 
-//                 }
-
-//             }
-//         }
-//         }
-// }
- 
 let cnt = 0;
 
-function render() { 
+function render() {
     musicRoom.LightTargetPattrol();
     musicRoom.NeonStickAnimation();
     // handleCollisions();
-    // partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
+    // partnerCollisions(); 
+    drum.handleCollisions(partners, controllers);
     if(cnt == 1 ) {
         cnt = 0;
         networking.broadcastToPlayers();
