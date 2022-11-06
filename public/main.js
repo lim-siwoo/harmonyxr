@@ -24,6 +24,7 @@ let audioCtx = null;
 let sound;
 let networking;
 let musicRoom;
+let aMajor, cMajor, fMajor, gMajor;
 
 let v = new THREE.Vector3(); // vector temp for compare collision
 let username = prompt('Enter username', Math.random().toString(36).substring(2, 12));
@@ -39,6 +40,57 @@ function initAudio() {
     const listener = new THREE.AudioListener();
     camera.add( listener );
 
+    aMajor = new THREE.Audio( listener );
+    cMajor = new THREE.Audio( listener );
+    fMajor = new THREE.Audio( listener );
+    gMajor = new THREE.Audio( listener );
+
+    
+    audioLoader.load( '/resources/guitar/a-major.wav', ( buffer ) =>{
+        aMajor.setBuffer( buffer );
+        aMajor.setLoop( false );
+        aMajor.setVolume( 0.5 );
+        aMajor.offset = 1.3;
+        aMajor.duration = 4;
+        // this.aMajor.play();
+    });
+
+    audioLoader.load( '/resources/guitar/c-major.wav', ( buffer ) =>{
+        cMajor.setBuffer( buffer );
+        cMajor.setLoop( false );
+        cMajor.setVolume( 0.5 );
+        cMajor.offset = 1;
+        cMajor.duration = 4;
+        // this.cMajor.play();
+    });
+
+    audioLoader.load( '/resources/guitar/f-major.wav', ( buffer ) =>{
+        fMajor.setBuffer( buffer );
+        fMajor.setLoop( false );
+        fMajor.setVolume( 0.5 );
+        fMajor.offset = 2.5;
+        fMajor.duration = 4;
+        // this.cMajor.play();
+    });
+
+    audioLoader.load( '/resources/guitar/g-major.wav', ( buffer ) =>{
+        this.gMajor.setBuffer( buffer );
+        this.gMajor.setLoop( false );
+        this.gMajor.setVolume( 0.5 );
+        this.gMajor.offset = 0.8;
+        this.gMajor.duration = 4;
+        // this.cMajor.play();
+    });
+
+
+    // load a sound and set it as the Audio object's buffer
+    // const audioLoader = new THREE.AudioLoader();
+    // audioLoader.load( '/resources/guitar/a-major.wav', function( buffer ) {
+    //     sound.setBuffer( buffer );
+    //     sound.setLoop( true );
+    //     sound.setVolume( 0.5 );
+    //     sound.play();
+    // });
 
 
     if (audioCtx !== null) {
@@ -372,15 +424,20 @@ function render() {
     // handleCollisions();
     // partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
     takeGuitar();
-    guitar.handleCollisions(controllers);
+    if(controllers.length){
+        const { grip, gamepad} = controllers[0];
+        guitar.aButton = gamepad.buttons[4].pressed;
+        guitar.bButton = gamepad.buttons[5].pressed;
+    }
+    guitar.handleCollisions(partners, controllers);
+    let isStroke = guitar.getStroke();
     if(cnt == 1 ) {
         cnt = 0;
         // 기타가 보이는지 정보 추가
-        if(controllers.length){
-            const {gamepad} = controllers[0];
-            networking.broadcastToPlayers(guitar.guitar.visible, gamepad.buttons[4].pressed, gamepad.buttons[5].pressed);
-        }
+        
+        networking.broadcastToPlayers(guitar.guitar.visible, guitar.aButton, guitar.bButton, isStroke);
     }
+
     cnt++;
     // guitar.handleParnterCollisions(partners);
     for(let j =0; j < partners.length; j++){

@@ -1,5 +1,5 @@
 class PlayerData {
-  constructor(camera, controller1, controller2, isGuitar, aButton, bButton) {
+  constructor(camera, controller1, controller2, isGuitar, aButton, bButton, isStroke) {
     this.position = {
       x: camera.position.x,
       y: camera.position.y,
@@ -38,6 +38,7 @@ class PlayerData {
     this.isGuitar = isGuitar;
     this.aButton = aButton;
     this.bButton = bButton;
+    this.isStroke = isStroke;
   }
 
 };

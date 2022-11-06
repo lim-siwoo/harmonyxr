@@ -15,6 +15,7 @@ constructor (conn, camera){
     this.isGuitar = false;
     this.aButton = false;
     this.bButton = false;
+    this.isPlaying = false;
     this.guitar = new Guitar(camera);
 
 
@@ -45,10 +46,12 @@ constructor (conn, camera){
         gltf.scene.position.set(0, 0, 0);
         this.rightHand.add(gltf.scene);
         this.rightHand.name="leftHand";
-        this.partner.add(this.rightHand);
+
         this.guitar.guitar.visible = false;
         this.guitar.guitar.name="guitar";
-        this.partner.getObjectByName("leftHand").add(this.guitar.guitar);
+        this.rightHand.add(this.guitar.guitar);
+
+        this.partner.add(this.rightHand);
         // 파트너 손에 기타 추가 (이렇게 하면 되나?)
         
     })
@@ -78,18 +81,19 @@ constructor (conn, camera){
         this.partner.getObjectByName("rightHand").position.y = data.controller2.position.y - data.position.y;
         this.partner.getObjectByName("rightHand").position.z = data.controller2.position.z - data.position.z;
         
-        this.partner.getObjectByName("leftHand").rotation.x = data.controller1.rotation.x - data.rotation.x;
-        this.partner.getObjectByName("leftHand").rotation.y = data.controller1.rotation.y - data.rotation.y;
-        this.partner.getObjectByName("leftHand").rotation.z = data.controller1.rotation.z - data.rotation.z;
-        this.partner.getObjectByName("rightHand").rotation.x = data.controller2.rotation.x - data.rotation.x;
-        this.partner.getObjectByName("rightHand").rotation.y = data.controller2.rotation.y - data.rotation.y;
-        this.partner.getObjectByName("rightHand").rotation.z = data.controller2.rotation.z - data.rotation.z;
+        this.partner.getObjectByName("leftHand").rotation.x = data.controller1.rotation.x;
+        this.partner.getObjectByName("leftHand").rotation.y = data.controller1.rotation.y;
+        this.partner.getObjectByName("leftHand").rotation.z = data.controller1.rotation.z;
+        this.partner.getObjectByName("rightHand").rotation.x = data.controller2.rotation.x;
+        this.partner.getObjectByName("rightHand").rotation.y = data.controller2.rotation.y;
+        this.partner.getObjectByName("rightHand").rotation.z = data.controller2.rotation.z;
         
 
         // 파트너 기타 보이게할지 결정하는 부분
         this.guitar.guitar.visible = data.isGuitar;
-        this.aButton = data.aButton;
-        this.bButton = data.bButton;
+        this.guitar.aButton = data.aButton;
+        this.guitar.bButton = data.bButton;
+        this.guitar.isStroke = data.isStroke;
       });
 
     });

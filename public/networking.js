@@ -112,14 +112,15 @@ class Networking {
     this.scene.add(partner.partner);
   }
 
-  broadcastToPlayers(isGuitar, aButton, bButton) {
+  broadcastToPlayers(isGuitar, aButton, bButton, isStroke) {
     let playerData = new PlayerData(
       this.camera,
       this.controller1,
       this.controller2,
       isGuitar,
       aButton,
-      bButton
+      bButton,
+      isStroke
     );
     this.conns.forEach((conn) => {
       conn.send(playerData);

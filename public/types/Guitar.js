@@ -11,7 +11,12 @@ class Guitar {
         this.INTERSECTION;
         this.selected;
         this.guitar.collided = false;
+        this.playing = false;
+        this.input = 0;
         this.v = new THREE.Vector3;
+        this.aButton = false;
+        this.bButton = false;
+        this.isStroke= false;
 
         const listener = new THREE.AudioListener();
         camera.add( listener );
@@ -84,7 +89,7 @@ class Guitar {
         this.material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
         this.collision = new THREE.Mesh( this.geometry, this.material );
         
-        this.guitarCollison = new THREE.Sphere((0.3,0,-0.1),1);
+        // this.guitarCollison = new THREE.Sphere((0.3,0,-0.1),1);
         // this.collision.material.color.setHex(0xffffff);
         // this.handCollison = new THREE.Sphere();
 
@@ -92,26 +97,25 @@ class Guitar {
         this.collision.name = "collision";
         this.guitar.add(this.collision);
 
-        this.guitarCollison.name = "guitarCollision";
-        this.guitar.add(this.guitarCollison);
+        // this.guitarCollison.name = "guitarCollision";
+        // this.guitar.add(this.guitarCollison);
 
         
-        
-        this.v = new THREE.Vector3() // vector temp for compare collision
         
         // GLTFLOADER
         const loader = new GLTFLoader().setPath('/resources/guitar/guitar_model/');
         loader.load('scene.gltf', (gltf) => {
-        gltf.scene.scale.set(0.1, 0.1, 0.1);
-        gltf.scene.position.set(0, 0, 0);
-        let y_angle = 90;
-        y_angle = y_angle * 3.14 / 180.0;
-        gltf.scene.rotation.set(0, y_angle, 0);
-        this.guitar.add(gltf.scene);
-        this.guitar.name = "guitar";
-        // this.partner.add(this.head);
+            gltf.scene.scale.set(0.1, 0.1, 0.1);
+            gltf.scene.position.set(0, 0, 0);
+            let y_angle = 90;
+            y_angle = y_angle * 3.14 / 180.0;
+            gltf.scene.rotation.set(0, y_angle, 0);
+            this.guitar.add(gltf.scene);
+            this.guitar.name = "guitar";
+            this.guitar.position.set(0.2,0,0);
+            // this.partner.add(this.head);
         })
-        this.guitar.position.set(0.2,0,0);
+        
         
     }
 
@@ -131,6 +135,8 @@ class Guitar {
 
     handleParnterCollisions(partner) {
 
+        this.guitar.collided = false;
+
         for(let g =0; g < partner.children.length; g++){
 
             for(let g =0; g < partner.children.length; g++){
@@ -140,66 +146,148 @@ class Guitar {
                     center: this.v
                 }
                 this.box.setFromObject(this.guitar.children[0]);
-                console.log("기타침요!")
                 if(this.box.intersectsSphere(sphere)){
                     //기타를 쳤다
                     if(this.guitar.collided == false){
-                        console.log("기타침요!")
+                        this.guitar.collided = true;
                         this.collision.material.color.setHex(0x000000);
                         // const { grip, gamepad } = controller;
     
-                        if(partner.bButton == true & partner.aButton == false & this.guitar.collision == false){
-                            // this.aMajor.stop();
-                            if(this.aMajor.isPlaying){
-                                this.aMajor.stop();
-                            }
-                            this.aMajor.play();
-                        }else if(partner.aButton == true & partner.bButton == false & this.guitar.collision == false)
+                        if(partner.bButton == true & partner.aButton == false) {
+                            this.input = 1;
+                        }else if(partner.aButton == true & partner.bButton == false)
                         {
-                            // this.cMajor.stop();
-                            if(this.cMajor.isPlaying){
-                                this.cMajor.stop();
-                            }
-                            this.cMajor.play();
-                        }else if(partner.aButton == true & partner.bButton == true & this.guitar.collision == false){
-                            if(this.fMajor.isPlaying){
-                                this.fMajor.stop();
-                            }
-                            this.fMajor.play();
+                            this.input = 2;
+                        }else if(partner.aButton == true & partner.bButton == true){
+                            this.input = 3;
                         }else{
-                            if(this.gMajor.isPlaying){
-                                this.gMajor.stop();
-                            }
-                            this.gMajor.play();
+                            this.input = 4;
+
                         }
     
-                        this.guitar.collided = true;
                     }
                     
                 }
                 else{
-                    this.guitar.collided = false;
                     this.collision.material.color.setHex(0xffff00);
                 }
             }
             
         }
         
+        switch(this.input) {
+            case 0:
+                break;
+            case 1:
+                if(!this.guitar.collided & this.playing){
+                    this.aMajor.stop();
+                    this.aMajor.play();
+                }else{
+                    this.aMajor.play();
+                }
+                break;
+            case 2:
+                if(this.aMajor.isPlaying){
+                    this.aMajor.stop();
+                }
+                this.aMajor.play();
+                break;
+            case 3:
+                if(this.aMajor.isPlaying){
+                    this.aMajor.stop();
+                }
+                this.aMajor.play();
+                break;
+            case 4:
+                if(this.aMajor.isPlaying){
+                    this.aMajor.stop();
+                }
+                this.aMajor.play();
+                break;
+            default:
+                break;
+            
+                
+                
+        }
+
     }
     
-    
+    getStroke(){
+        return this.playing;
+    }
 
-    handleCollisions(controllers) {
-        this.INTERSECTION = undefined;
+    handleCollisions(partners, controllers) {
+        let v = new THREE.Vector3(); // vector temp for compare collision
+        let v2 = new THREE.Vector3();
+        this.guitar.collided = false;
+        this.collision.material.color.setHex(0xffff00);
+        //파트너 충돌 처리
+        // for (let partner of partners) {
+        //     for (let part of partner.partner.children) {
+        //         // v.x = v.x - partner.position.x;
+        //         // v.y = v.y - partner.position.y;
+        //         // v.z = v.z - partner.position.z;
+        //         // v.sub(partner.partner.position);
+        //         part.getWorldPosition(v);
+        //         const sphere = {
+        //           radius: 0.04,
+        //           center: v
+        //         };
+        //         console.log("2");
+        //         console.log("충돌 감지할 손: ", v)
+        //         this.box.setFromObject(this.guitar.children[0]);
+        //         console.log("콜라이더", this.box.min);
+        //         // this.guitar.children[0].getWorldPosition(v2);
+
+        //         if(partner.partner.children.length > 2) {
+        //             partner.partner.getObjectByName("leftHand").children[0].getWorldPosition(v2);
+        //             console.log("왼손 자식1 좌표", v2)
+        //             // if (partner.partner.children[0].children.length > 1) {
+        //             //     partner.partner.getObjectByName("leftHand").children[0].children[1].getWorldPosition(v2);
+        //             //     console.log("왼손 자식2 좌표", v2)
+        //             // }
+        //             partner.partner.getObjectByName("rightHand").getWorldPosition(v2);
+        //             console.log("오른손 월드 좌표", v2)
+        //             // partner.partner.getObjectByName("leftHand").getWorldPosition(v2);
+        //             // this.box.min.add(v2);
+        //             // this.box.max.add(v2);
+        //         }
+        //         // console.log("v2", v2);
+        //         // console.log("box: ", this.box)
+                
+        //         if (this.box.intersectsSphere(sphere)) {//왼손이랑 닿았을때
+        //             console.log("파트너 손 충돌");
+        //             this.guitar.collided = true;
+        //             this.collision.material.color.setHex(0x000000);
+        //         }
+        //         if(this.bButton == true && this.aButton == false){
+        //             this.input = 1;
+        //         }else if(this.aButton == true && this.bButton == false ) {
+        //             this.input = 2;
+        //         }else if(this.aButton == true && this.bButton == true ) {
+        //             this.input = 3;
+        //         }else{
+        //             this.input = 4;
+        //         }
+
+        //     }
+        // }
+
+        if(this.bButton == true && this.aButton == false){
+            this.input = 1;
+        }else if(this.aButton == true && this.bButton == false ) {
+            this.input = 2;
+        }else if(this.aButton == true && this.bButton == true ) {
+            this.input = 3;
+        }else{
+            this.input = 4;
+        }
+
+        this.guitar.collided = this.isStroke;
         
 
-        // TODO: 파트너 기타와 파트너 손의 충돌 처리를 추가해야 할듯
-        
-
-
-        // let collision = this.guitar.getObjectByName("collision");
-        // this.box.getBoundingBox(this.guitarCollison);
-
+        //자기자신 충돌 처리
         for(let g =0; g <controllers.length; g++){
             const controller = controllers[g];
             // controller.colliding = false;
@@ -213,45 +301,64 @@ class Guitar {
             this.box.setFromObject(this.guitar.children[0]);
             if(this.box.intersectsSphere(sphere)){
                 //기타를 쳤다
-                if(this.guitar.collided == false){
-                    
-                    this.collision.material.color.setHex(0x000000);
-                    // const { grip, gamepad } = controller;
-
-                    if(gamepad.buttons[5].pressed == true & gamepad.buttons[4].pressed == false){
-                        // this.aMajor.stop();
-                        if(this.aMajor.isPlaying){
-                            this.aMajor.stop();
-                        }
-                        this.aMajor.play();
-                    }else if(gamepad.buttons[4].pressed == true & gamepad.buttons[5].pressed == false )
-                    {
-                        // this.cMajor.stop();
-                        if(this.cMajor.isPlaying){
-                            this.cMajor.stop();
-                        }
-                        this.cMajor.play();
-                    }else if(gamepad.buttons[4].pressed == true & gamepad.buttons[5].pressed == true ){
-                        if(this.fMajor.isPlaying){
-                            this.fMajor.stop();
-                        }
-                        this.fMajor.play();
-                    }else{
-                        if(this.gMajor.isPlaying){
-                            this.gMajor.stop();
-                        }
-                        this.gMajor.play();
-                    }
-
-                    this.guitar.collided = true;
-                }
-                
+                this.guitar.collided = true;
+                this.collision.material.color.setHex(0x000000);
             }
-            else{
-                this.guitar.collided = false;
-                this.collision.material.color.setHex(0xffff00);
+
+
+            if(this.bButton == true && this.aButton == false){
+                this.input = 1;
+            }else if(this.aButton == true && this.bButton == false ) {
+                this.input = 2;
+            }else if(this.aButton == true && this.bButton == true ){
+                this.input = 3;
+            }else{
+                this.input = 4;
             }
         }
+
+        if(this.guitar.collided) {
+            this.collision.material.color.setHex(0x000000);
+        }
+
+        if(!this.guitar.collided && this.playing){
+            //finish
+            this.playing = false;
+        }else if(this.guitar.collided && !this.playing) {
+            this.playing = true;
+            //소리 출력
+            switch(this.input) {
+                case 1:
+                    if(this.aMajor.isPlaying){
+                        this.aMajor.stop();
+                    }
+                    this.aMajor.play();
+                    break;
+                case 2:
+                    if(this.cMajor.isPlaying){
+                        this.cMajor.stop();
+                    }
+                    this.cMajor.play();
+                    break;
+                case 3:
+                    if(this.fMajor.isPlaying){
+                        this.fMajor.stop();
+                    }
+                    this.fMajor.play();
+                    break;
+                case 4:
+                    if(this.gMajor.isPlaying){
+                        this.gMajor.stop();
+                    }
+                    this.gMajor.play();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        
+
         
     }
 }
