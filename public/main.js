@@ -334,12 +334,12 @@ function animate() {
 //         }
 //         }
 // }
-
+ 
 let cnt = 0;
 
 function render() { 
     musicRoom.LightTargetPattrol();
-    // musicRoom.NeonStickAnimation();
+    musicRoom.NeonStickAnimation();
     // handleCollisions();
     // partnerCollisions(); //파트너가 실로폰에 닿으면 console에 log가 뜹니다. 하지만 실로폰이 떨리진 않음. 이유는 모르겠습니다...
     if(cnt == 1 ) {
