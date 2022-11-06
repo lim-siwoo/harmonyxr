@@ -382,11 +382,11 @@ function handleCollisions() {
 
 }
 
-function partnerCollisions(){ 
+// function partnerCollisions(){ 
 
-    for (let i = 0; i < group.children.length; i++) {
-        group.children[i].collided = false;
-    }
+//     for (let i = 0; i < group.children.length; i++) {
+//         group.children[i].collided = false;
+//     }
 
 //     for(let j =0; j < partners.length; j++){
 //         for(let g =0; g < partners[j].partner.children.length; g++){
