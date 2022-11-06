@@ -63,7 +63,7 @@ class Networking {
     this.peer.on("connection", (conn) => {
       console.log("Connection Received ", conn.peer);
       this.conns.push(conn);
-      let partner = new Partner(conn);
+      let partner = new Partner(conn, this.camera);
       this.scene.add(partner.partner);
     });
 
@@ -107,16 +107,20 @@ class Networking {
     });
 
     this.conns.push(conn);
-    let partner = new Partner(conn);
+    let partner = new Partner(conn, this.camera);
     this.partners.push(partner);
     this.scene.add(partner.partner);
   }
 
-  broadcastToPlayers() {
+  broadcastToPlayers(isGuitar, aButton, bButton, isStroke) {
     let playerData = new PlayerData(
       this.camera,
       this.controller1,
-      this.controller2
+      this.controller2,
+      isGuitar,
+      aButton,
+      bButton,
+      isStroke
     );
     this.conns.forEach((conn) => {
       conn.send(playerData);
