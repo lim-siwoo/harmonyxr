@@ -212,10 +212,7 @@ class Guitar {
         }
 
     }
-    
-    getStroke(){
-        return this.playing;
-    }
+
 
     handleCollisions(partners, controllers) {
         let v = new THREE.Vector3(); // vector temp for compare collision
@@ -284,6 +281,7 @@ class Guitar {
             this.input = 4;
         }
 
+        console.log(this.isStroke);
         this.guitar.collided = this.isStroke;
         
 
@@ -302,6 +300,7 @@ class Guitar {
             if(this.box.intersectsSphere(sphere)){
                 //기타를 쳤다
                 this.guitar.collided = true;
+                console.log(this.guitar.collided)
                 this.collision.material.color.setHex(0x000000);
             }
 
@@ -358,7 +357,7 @@ class Guitar {
         }
 
         
-
+        return this.guitar.collided;
         
     }
 }

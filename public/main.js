@@ -445,8 +445,8 @@ function render() {
         guitar.aButton = gamepad.buttons[4].pressed;
         guitar.bButton = gamepad.buttons[5].pressed;
     }
-    guitar.handleCollisions(partners, controllers);
-    let isStroke = guitar.getStroke();
+    let isStroke = guitar.handleCollisions(partners, controllers);
+
     piano.handleCollisions(partners, controllers);
 
     // partnerCollisions(); 

@@ -163,7 +163,7 @@ class Piano {
 
       const { grip, gamepad } = controller;
       const sphere = {
-        radius: 0.03,
+        radius: 0.02,
         center: grip.position
       };
 
