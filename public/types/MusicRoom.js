@@ -117,7 +117,7 @@ class MusicRoom {
                     }
                     
                     this.neonGroup1.add(this.neonStick);
-                    console.log("add one : " + (j-4+0.1, 0, i+3));
+                        // console.log("add one : " + (j-4+0.1, 0, i+3));
                     })
             }
 
@@ -204,8 +204,7 @@ class MusicRoom {
     
         this.scene.add(this.spotLightW3.target );
         this.scene.add(this.spotLightB.target );
-    // 
-    // 
+
         this.circlePattern4[0] = 2 + 1 * Math.cos(this.time*-1)*-1;
         this.circlePattern4[1] = 0 + 1 * Math.sin(this.time*-1)*-1;
         this.spotLightW4.target.position.x = this.circlePattern4[0];
@@ -231,7 +230,6 @@ class MusicRoom {
         this.neonStickAngle = this.neonStickAngle + 0.1*this.pattrolFlag;
         this.neonGroup1.position.set(0,this.neonStickAngle,0);
         this.neonGroup2.position.set(0,1+this.neonStickAngle*-1,0);
-    
     }        
 }
 

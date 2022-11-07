@@ -173,20 +173,6 @@ class Piano {
           key.collided = true;
         }
       }
-
-      // if (controller.colliding) {
-      //   if (!controller.playing) {
-      //     controller.playing = true;
-      //     const supportHaptic = 'hapticActuators' in gamepad && gamepad.hapticActuators != null && gamepad.hapticActuators.length > 0;
-      //     if (supportHaptic) {
-      //       gamepad.hapticActuators[0].pulse(0.5, 100);
-      //     }
-      //   }
-      // } else {
-      //   if (controller.playing) {
-      //     controller.playing = false;
-      //   }
-      // }
     }
 
     // 충돌이 일어난거로 확인된 키들에 대한 처리
