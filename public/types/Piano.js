@@ -11,7 +11,7 @@ class Piano {
     const loader = new GLTFLoader().setPath('/resources/piano/');
     loader.load('scene.gltf', (gltf) => {
       gltf.scene.scale.set(0.22, 0.22, 0.22);
-      gltf.scene.position.set(2, 0.23, 0.5);
+      gltf.scene.position.set(2, 0.4, 0.5);
       let y_angle = 120;
       y_angle = y_angle * 3.14 / 180.0;
       gltf.scene.rotation.set(0, y_angle, 0);
@@ -21,7 +21,7 @@ class Piano {
         let sound = new THREE.Audio(listener);
         sound.setBuffer(soundBuffer);
         sound.setLoop(false);
-        sound.setVolume(1);
+        sound.setVolume(6);
         let box = new THREE.Box3();
         let object = this.object.getObjectByName("White_11");
         box.setFromObject(object);
@@ -37,7 +37,7 @@ class Piano {
         let sound = new THREE.Audio(listener);
         sound.setBuffer(soundBuffer);
         sound.setLoop(false);
-        sound.setVolume(1);
+        sound.setVolume(6);
         let box = new THREE.Box3();
         let object = this.object.getObjectByName("White001_10");
         box.setFromObject(object);
@@ -53,7 +53,7 @@ class Piano {
         let sound = new THREE.Audio(listener);
         sound.setBuffer(soundBuffer);
         sound.setLoop(false);
-        sound.setVolume(1);
+        sound.setVolume(6);
         let box = new THREE.Box3();
         let object = this.object.getObjectByName("White002_12");
         box.setFromObject(object);
@@ -69,7 +69,7 @@ class Piano {
         let sound = new THREE.Audio(listener);
         sound.setBuffer(soundBuffer);
         sound.setLoop(false);
-        sound.setVolume(1);
+        sound.setVolume(6);
         let box = new THREE.Box3();
         let object = this.object.getObjectByName("White003_13");
         box.setFromObject(object);
@@ -85,7 +85,7 @@ class Piano {
         let sound = new THREE.Audio(listener);
         sound.setBuffer(soundBuffer);
         sound.setLoop(false);
-        sound.setVolume(1);
+        sound.setVolume(6);
         let box = new THREE.Box3();
         let object = this.object.getObjectByName("White004_14");
         box.setFromObject(object);
@@ -101,7 +101,7 @@ class Piano {
         let sound = new THREE.Audio(listener);
         sound.setBuffer(soundBuffer);
         sound.setLoop(false);
-        sound.setVolume(1);
+        sound.setVolume(6);
         let box = new THREE.Box3();
         let object = this.object.getObjectByName("White005_15");
         box.setFromObject(object);
@@ -117,7 +117,7 @@ class Piano {
         let sound = new THREE.Audio(listener);
         sound.setBuffer(soundBuffer);
         sound.setLoop(false);
-        sound.setVolume(1);
+        sound.setVolume(6);
         let box = new THREE.Box3();
         let object = this.object.getObjectByName("White006_16");
         box.setFromObject(object);
@@ -145,7 +145,7 @@ class Piano {
         for (let key of this.keys) {
           part.getWorldPosition(v);
           const sphere = {
-            radius: 0.02,
+            radius: 0.01,
             center: v
           };
           // console.log(v)
@@ -163,7 +163,7 @@ class Piano {
 
       const { grip, gamepad } = controller;
       const sphere = {
-        radius: 0.02,
+        radius: 0.01,
         center: grip.position
       };
 
