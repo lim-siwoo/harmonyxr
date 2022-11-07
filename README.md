@@ -56,7 +56,7 @@ The 3D models were used free resources from Sketchfab.
 ## Members
 
 Beomgi Kim | chromato99@gmail.com<br>
-Doyeon Hyeon | 118ssun@naver.com<br>
+Doyeon Hyn | 118ssun@naver.com<br>
 Siwoo Lim | siwoo5530@gmail.com<br>
 Jaejun Park | jpark3971@gmail.com
 
