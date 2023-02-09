@@ -18,10 +18,11 @@ HarmonyXR is a project that uses [WebXR](https://developer.mozilla.org/en-US/doc
 WebXR only supports HTTPS environment, so for testing, you need to issue an SSL certificate or enable `#unsafely-treat-insecure-origin-as-secure` in the chrome flags page.
 
 ```zsh
-cd <project directory>
-npm install
-node server.js
+docker build --tag harmonyxr .
+docker run -d -p 8006:8006 --name harmonyxr harmonyxr
 ```
+
+Open <http://localhost:8006> on web browser.
 
 ## Implementation
 
