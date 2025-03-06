@@ -1,5 +1,6 @@
 # HarmonyXR
 <p align="center"><img src="https://user-images.githubusercontent.com/20539422/200205654-5167ec1e-7f52-4e76-b1a0-7cf3dceab172.png" width="30%" height="30%"></p>
+
 HarmonyXR is a project to implement real-time music performance in the virtual reality environment.
 HarmonyXR is a project that uses [WebXR](https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API/Fundamentals). It builds a web server with Node.js, implements 3D graphics with Three.js, and implements real-time communication between users with WebRTC using PeerJS.
 
@@ -10,7 +11,7 @@ Check out our demo video: [HarmonyXR Demo](https://youtu.be/I_4hhGwGjz0?si=ojZ2I
 - Virtual Music Stage
 - Real-time multi-user experience
 - Real-time Voice Chat
-- Cross platform (Any platform you can use a browser that [supports WebXR](https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API#browser_compatibility).)
+- Cross platform (Any platform you can use a browser that [supports WebXR](https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API#browser_compatibility).
 
 ## Run on localhost
 WebXR only supports HTTPS environment, so for testing, you need to issue an SSL certificate or enable `#unsafely-treat-insecure-origin-as-secure` in the chrome flags page.
