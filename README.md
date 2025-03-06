@@ -6,6 +6,9 @@ HarmonyXR is a project to implement real-time music performance in the virtual r
 
 HarmonyXR is a project that uses [WebXR](https://developer.mozilla.org/en-US/docs/Web/API/WebXR_Device_API/Fundamentals). It builds a web server with Node.js, implements 3D graphics with Three.js, and implements real-time communication between users with WebRTC using PeerJS.
 
+## Demo Video
+Check out our demo video: [HarmonyXR Demo](https://youtu.be/I_4hhGwGjz0?si=ojZ2I5NPuj6Kko7o)
+
 ## Project Features
 
 - Virtual Music Stage
