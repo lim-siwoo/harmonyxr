@@ -9,6 +9,9 @@ HarmonyXR is a project that uses [WebXR](https://developer.mozilla.org/en-US/doc
 ## Demo Video
 Check out our demo video: [HarmonyXR Demo](https://youtu.be/I_4hhGwGjz0?si=ojZ2I5NPuj6Kko7o)
 
+> **Note:** Audio is not available in the demo video because, at the time of recording, the Oculus Rift's video recording feature did not support stereo mix settings.
+
+
 ## Project Features
 
 - Virtual Music Stage
